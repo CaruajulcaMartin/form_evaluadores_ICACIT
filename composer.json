@@ -1,0 +1,20 @@
+{
+    "name": "csanchez/cert-mvc",
+    "description": "pplication created with mvc",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Carlos Sánchez",
+            "email": "carlos.sanchez@ingenova.com.pe"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload":
+    {
+        "psr-4":
+        {
+            "Mini\\" : "app/"
+        }
+    }
+}

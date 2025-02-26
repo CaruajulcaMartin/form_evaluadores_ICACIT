@@ -1,0 +1,33 @@
+<IfModule mod_rewrite.c>
+#RewriteEngine On
+#RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
+#RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
+#RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+#RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+#RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/(?:\ Ballot169)?
+#RewriteRule ^([0-9]+)_([0-9]+)_([0-9]+)_([^\d\/]+)_[0-9]+_[0-9]+_.*_[0-9]+_.*$ ?$4$2=$3&%{QUERY_STRING}[L]
+#RewriteRule ^(.*) public/$1 [L]
+
+# BEGIN WordPress
+#----E-CORREOS
+RewriteEngine On
+RewriteRule ^(.*) public/$1 [L]
+#----FIN DE E-CORREOS
+# END WordPress
+
+#RewriteEngine On
+#RewriteRule ^(.*) public/$1 [L]
+#RewriteBase /
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteCond %{REQUEST_URI} public/([^\s?]*) [NC]
+#RewriteRule ^ %1 [L,NE,R=302]
+#RewriteRule ^((?!public/).*)$ cer4/public/$1 [L,NC]
+
+</IfModule>
+#----ICACIT
+#RewriteEngine On
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule ^(.*) public/$1 [L]
+#----FIN ICACIT

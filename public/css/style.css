@@ -1,0 +1,13 @@
+form{
+/*	width: 400px;*/
+	position: relative;
+}
+.ajaxgif{
+	position:absolute; bottom:25px; /*right:-20px;*/
+}
+.ajaxgiflogin{
+	position:absolute; /*right:-20px;*/
+}
+.hide{
+	display:none;
+}
