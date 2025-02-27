@@ -1,13 +1,161 @@
-form{
-/*	width: 400px;*/
-	position: relative;
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+:root {
+    --color-primary: #002060;
+    --color-secondary: #c2e3f5;
+    --font-size-title: 40px;
+    --font-size-subtitle: 20px;
 }
-.ajaxgif{
-	position:absolute; bottom:25px; /*right:-20px;*/
+
+* {
+    font-family: "Nunito", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
-.ajaxgiflogin{
-	position:absolute; /*right:-20px;*/
+
+.header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
+
+    img {
+        width: 300px;
+    }
+
+    h1 {
+        font-size: var(--font-size-title);
+        font-weight: 600;
+        text-align: center;
+        color: var(--color-primary);
+    }
+
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 30px;
+        }
+
+        img {
+            width: 200px;
+        }
+    }
 }
-.hide{
-	display:none;
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--color-secondary);
+    border-radius: 15px;
+    padding: 8px;
+    font-size: var(--font-size-subtitle);
+    color: var(--color-primary);
+
+    h4 {
+        margin: 0;
+        font-size: var(--font-size-subtitle);
+    }
+
+    @media (max-width: 768px) {
+        font-size: 18px;
+
+        h4 {
+            font-size: 18px;
+        }
+    }
+}
+
+.formulario {
+    padding: 20px 0;
+
+    @media (max-width: 768px) {
+        padding: 10px 0;
+    }
+}
+
+.form-section {
+    padding-bottom: 20px;
+
+    @media (max-width: 768px) {
+        padding-bottom: 10px;
+    }
+}
+
+.grupo {
+    gap: 20px;
+
+    @media (max-width: 768px) {
+        gap: 10px;
+    }
+}
+
+.firma-container {
+    border: 2px solid #ccc;
+    width: 100%;
+    height: 200px;
+    position: relative;
+    background: #fff;
+    cursor: crosshair;
+}
+
+.btn-agregar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/*ESTILOS PARA LA FIRMA DIGITAL*/
+#firmaCanvas {
+    width: 100%;
+    height: 200px;
+    background-color: #f9f9f9;
+    cursor: crosshair;
+    border: dashed 2px #002060;
+    border-radius: 10px;
+}
+
+
+/*estilos de PREVISUALIZACION*/
+#previewModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10px auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.modal-backdrop {
+    position: inherit !important;
+}
+
+.modal-header{
+    border-bottom: 1px solid #ddd;
+    gap: 80px;
+
+    .modal-logo{
+        width: 200px;
+    }
+
+    .modal-title{
+        font-size: 24px;
+    }
+}
+
+.modal-footer {
+    border-top: 1px solid #ddd;
+    text-align: right;
 }
