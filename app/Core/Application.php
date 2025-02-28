@@ -1,48 +1,95 @@
 <?php
-
+/** Para mais informações sobre namespaces @veja http://php.net/manual/en/language.namespaces.importing.php */
 namespace Mini\Core;
 
-use PDO;
-
-class Model
+class Application
 {
-    /**
-     * @var Conexión de base de datos nula
-     */
-    public $db = null;
+    /** @var null O controller */
+    private $url_controller = null;
+
+    /** @var null O método (do controller acima), também comumente chamado "action" */
+    private $url_action = null;
+
+    /** @var array URL parameters */
+    private $url_params = array();
 
     /**
-     * Cada vez que se crea el modelo, abra una conexión a la base de datos.
+     * "Iniciar" a application:
+     * Analise os elementos de URL e chame o controlador / método de acordo ou o fallback
      */
-    function __construct()
+    public function __construct()
     {
-        try {
-            self::openDatabaseConnection();
-        } catch (\PDOException $e) {
-            exit('No se pudo establecer la conexión de la base de datos.');
+        // criar um array com as partes da URL em $url
+        $this->splitUrl();
+
+        // verificar o controller: se nenhum controlador é fornecido então carregue a página inicial
+        if (!$this->url_controller) {
+
+            $page = new \Mini\Controller\HomeController();
+            $page->index();
+
+        } elseif (file_exists(APP . 'Controller/' . ucfirst($this->url_controller) . 'Controller.php')) {
+            // aqui nós verificamos o controller: existe tal controller?
+
+            // Em caso afirmativo, carregue este arquivo e crie este controller
+            // como \Mini\Controller\CarController
+            $controller = "\\Mini\\Controller\\" . ucfirst($this->url_controller) . 'Controller';
+            $this->url_controller = new $controller();
+//$method='';
+            // verifique o método: existe um método desse tipo no controller ? 
+            if (method_exists($this->url_controller, $this->url_action) && is_callable(array($this->url_controller, $this->url_action))) {
+                
+                if (!empty($this->url_params)) {
+                    // Chame o método e passe argumentos para ele
+                    call_user_func_array(array($this->url_controller, $this->url_action), $this->url_params);
+                } else {
+                    // Se nenhum parâmetro for dado, basta chamar o método sem parâmetros, como $this->home->method();
+                    $this->url_controller->{$this->url_action}();
+                }
+
+            } else {
+                if (empty($this->url_action) || strlen($this->url_action) == 0) {
+                    // nenhuma ação definida: chame o método index () padrão de um controller empty($bytes) || strlen($bytes)
+                    $this->url_controller->index();
+                } else {
+                    $page = new \Mini\Controller\ErrorController();
+                    $page->index();
+                }
+            }
+        } else {
+            $page = new \Mini\Controller\ErrorController();
+            $page->index();
         }
     }
 
     /**
-     * Abra la conexión de la base de datos con las credenciales de la aplicación. /config/config.php
+     * Obter e separar as partes da URL
      */
-    private function openDatabaseConnection()
+    private function splitUrl()
     {
-        // configura las opciones de conexión PDO. En este caso, establecemos el modo de búsqueda en
-        // "objects", lo que significa que todos los resultados serán objetos, como este: $result->user_name !
-        // Por ejemplo, fetch mode FETCH_ASSOC retornaria resultados como este: $result["user_name] !
-        // @see http://www.php.net/manual/en/pdostatement.fetch.php
-        $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ, PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING);
-        
-        // establecer la codificación es diferente cuando se usa PostgreSQL
-        if (DB_TYPE == "pgsql") {
-            $databaseEncodingenc = " options='--client_encoding=" . DB_CHARSET . "'";
-        } else {
-            $databaseEncodingenc = "; charset=" . DB_CHARSET;
+        if (isset($_GET['url'])) {
+
+            // separar URL
+            $url = trim($_GET['url'], '/');
+            $url = filter_var($url, FILTER_SANITIZE_URL);
+            $url = explode('/', $url);
+
+            // Coloque as partes da URL em propriedades de acordo
+            // By the way, a sintaxe aqui é apenas uma forma abreviada de if / else, chamado "Operadores Ternários"
+            // @see http://davidwalsh.name/php-shorthand-if-else-ternary-operators
+            $this->url_controller = isset($url[0]) ? $url[0] : null;
+            $this->url_action = isset($url[1]) ? $url[1] : null;
+
+            // Remover o controller e o action da URL dividida
+            unset($url[0], $url[1]);
+
+            // Rebase array keys e armazene os parâmetros da URL
+            $this->url_params = array_values($url);
+
+            // Para depuração. Descomente o código abaixo se você tiver problemas com o URL
+            //echo 'Controller: ' . $this->url_controller . '<br>';
+            //echo 'Action: ' . $this->url_action . '<br>';
+            //echo 'Parameters: ' . print_r($this->url_params, true) . '<br>';
         }
-//array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
-        // generar una conexión de base de datos utilizando el conector PDO
-        // @see http://net.tutsplus.com/tutorials/php/why-you-should-be-using-phps-pdo-for-database-access/
-        $this->db = new PDO(DB_TYPE . ':host=' . DB_HOST . ';dbname=' . DB_NAME . $databaseEncodingenc, DB_USER, DB_PASS, $options);
     }
 }

@@ -1,3 +1,4 @@
+
 <header class="container header">
   <img src="<?php echo URL; ?>images/ICACIT_2025.jpg" alt="logo de ICACIT">
   <h1 class="title">Formulario de Inscripción - Evaluador ICACIT</h1>
@@ -10,7 +11,7 @@
       aria-valuemin="0" aria-valuemax="100">Paso 1 de 7</div>
   </div>
 
-  <form class="row g-3 formulario" action="" method="POST" id="formularioEvaluador" enctype="multipart/form-data">
+  <form class="row g-3 formulario" action="<?php echo URL; ?>Home/enviarFormulario/" method="POST" id="formularioEvaluador" enctype="multipart/form-data">
     <!-- seccion 1: informacion personal -->
     <div class="form-section" id="section1">
       <h2><b>Sección 01:</b> Información del Postulante</h2>
@@ -30,7 +31,7 @@
         </div>
         <div class="col-md-4">
           <label class="form-label">Nombres Completos:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="nombres" required>
+          <input type="text" class="form-control" name="nombresCompletos" required>
         </div>
         <div class="col-md-2">
           <label class="form-label">Tipo de Identidad:<span class="text-danger">*</span></label>
@@ -44,7 +45,7 @@
         </div>
         <div class="col-md-3">
           <label class="form-label">Numero de Identidad:<span class="text-danger">*</span></label>
-          <input type="text" name="numDoc" id="numDoc" class="form-control" required disabled>
+          <input type="text" name="numDoc" id="tipoIdentidad" class="form-control" required disabled>
         </div>
 
         <!-- archivo de identidad adjunto -->
@@ -112,7 +113,7 @@
           <label class="form-label">Número de Celular:<span class="text-danger">*</span></label>
           <!-- <input type="tel" class="form-control" name="celular" placeholder="Numero de Whatsapp" required> -->
           <div class="input-group" id="phoneInput">
-            <select id="phoneCode" class="form-control" style="width: 120px;" required>
+            <select id="phoneCode" name="phoneCode" class="form-control" style="width: 120px;" required>
               <option value="" selected disabled>--Código--</option>
             </select>
             <input type="tel" id="phoneNumber" class="form-control" name="celular"
@@ -124,7 +125,7 @@
               class="text-danger">*</span></label>
           <div class="input-group">
             <span class="input-group-text" id="basic-addon3">https://example.com/</span>
-            <input type="url" class="form-control" id="basic-url"
+            <input type="url"  name="redProfesional" class="form-control" id="basic-url"
               placeholder="LinkedIn, red interna de la universidad o empresa"
               aria-describedby="basic-addon3 basic-addon4" required>
           </div>
@@ -179,11 +180,11 @@
           <!-- <select class="form-control" name="PaisDatoDominicialProvincia" id="PaisDatoDominicialProvincia" required>
                             <option value="">--Seleccionar Provincia / Municipio--</option>
                         </select> -->
-          <input type="text" class="form-control" name="provincia" required>
+          <input type="text" class="form-control" name="provinciaDatoDominicial" required>
         </div>
         <div class="col-md-3">
           <label class="form-label">Distrito:</label>
-          <input type="text" class="form-control" name="distrito">
+          <input type="text" class="form-control" name="distritoDatoDominicial">
         </div>
         <div class="col-md-12">
           <label class="form-label">Referencia del Domicilio:</label>

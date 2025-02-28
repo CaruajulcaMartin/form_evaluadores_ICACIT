@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $(document).on("submit", "formularioEvaluador", function (event) {
+  $(document).on("submit", "#formularioEvaluador", function (event) {
     event.preventDefault();
     $.ajax({
       url: url + "/Home/enviarFormulario",
@@ -14,3 +14,4 @@ $(document).ready(function () {
     });
   });
 });
+
