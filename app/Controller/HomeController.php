@@ -1,62 +1,72 @@
 <?php
 
 namespace Mini\Controller;
+
 use Mini\Model\Home;
+use Exception;
 
 class HomeController
 {
-  public function index()
+    private $model;
+
+    public function index()
   {
       $Home = new Home();
-      $personas = $Home->getAllPersonas();
-      require APP . 'view/_templates/header.php';
+      require APP . 'view/_templates/header_adm.php';
       require APP . 'view/home/index.php';
-      require APP . 'view/_templates/footer.php';
+      require APP . 'view/_templates/footer_firmante.php';
   }
-  public function cargar_modal($id)
-  {
-      $Home = new Home();
-      $firmante = $Home->cargar_modal($id);
-      require APP . 'view/_templates/header.php';
-      require APP . 'view/home/modal.php';
-      require APP . 'view/_templates/footer.php';
-  }
-  public function add_modal()
-  {
-      if (isset($_POST["add_modal"])) {
-          $firmante = $_POST["firmante"];
-          $cargo = $_POST["cargo"];
-          $imagen = $_POST["imagen"];
-          $institucion = $_POST["institucion"];
-          $Home = new Home();
-          $Home->add_modal($firmante, $cargo, $imagen, $institucion);
-      }
-      header('location: ' . URL . 'home/index');
-  }
-  public function update_modal()
-  {
-      if (isset($_POST["update_modal"])) {
-          $id = $_POST["id"];
-          $firmante = $_POST["firmante"];
-          $cargo = $_POST["cargo"];
-          $imagen = $_POST["imagen"];
-          $institucion = $_POST["institucion"];
-          $Home = new Home();
-          $Home->update_modal($id, $firmante, $cargo, $imagen, $institucion);
-      }
-      header('location: ' . URL . 'home/index');
-  }
-  public function delete_modal($id)
-  {
-      if (isset($id)) {
-          $Home = new Home();
-          $Home->delete_modal($id);
-      }
-      header('location: ' . URL . 'home/index');
-  }
-  public function copyTransparent($destination, $imagen)
-  {
-      $Home = new Home();
-      $Home->copyTransparent($destination, $imagen);
-  }
+
+    public function enviarFormulario()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(["status" => "error", "message" => "Método no permitido"]);
+            return;
+        }
+
+        try {
+            // Se omite la validación ya que FormularioValidator no está implementado
+            $postulante = $_POST;
+            
+            // Manejo seguro de archivos
+            $postulante['foto_perfil'] = $this->procesarArchivo($_FILES['fotoPerfil'] ?? null, 'uploads/fotos/');
+            $postulante['pdf_documento_identidad'] = $this->procesarArchivo($_FILES['pdfDocumentoIdentidad'] ?? null, 'uploads/documentos/');
+            
+            // Guardar postulante en la base de datos
+            if ($this->model->insertPersonalInfo($postulante)) {
+                echo json_encode(["status" => "success", "message" => "Formulario enviado con éxito"]);
+            } else {
+                throw new Exception("Error al guardar los datos");
+            }
+        } catch (Exception $e) {
+            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+        }
+    }
+
+    private function procesarArchivo($archivo, $directorio)
+    {
+        if (!$archivo || empty($archivo['name'])) {
+            return null;
+        }
+
+        $permitidos = ['image/jpeg', 'image/png', 'application/pdf'];
+        $tipoArchivo = mime_content_type($archivo['tmp_name']);
+
+        if (!in_array($tipoArchivo, $permitidos)) {
+            throw new Exception("Formato de archivo no permitido");
+        }
+
+        if ($archivo['size'] > 5 * 1024 * 1024) { // 5MB máximo
+            throw new Exception("El archivo es demasiado grande");
+        }
+
+        $nombreArchivo = uniqid() . "_" . basename($archivo['name']);
+        $rutaDestino = $directorio . $nombreArchivo;
+
+        if (!move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
+            throw new Exception("Error al subir el archivo");
+        }
+
+        return $rutaDestino;
+    }
 }

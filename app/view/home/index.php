@@ -10,7 +10,7 @@
       aria-valuemin="0" aria-valuemax="100">Paso 1 de 7</div>
   </div>
 
-  <form class="row g-3 formulario">
+  <form class="row g-3 formulario" action="" method="POST" id="formularioEvaluador" enctype="multipart/form-data">
     <!-- seccion 1: informacion personal -->
     <div class="form-section" id="section1">
       <h2><b>Sección 01:</b> Información del Postulante</h2>
@@ -187,10 +187,10 @@
         </div>
         <div class="col-md-12">
           <label class="form-label">Referencia del Domicilio:</label>
-          <textarea name="observaciones" id="observaciones" class="form-control" rows="3"></textarea>
-          <small id="contadorObservaciones" class="text-muted">Máximo 150 caracteres. Caracteres actuales:
+          <textarea name="referenciaDomicilio" id="referenciaDomicilio" class="form-control" rows="3"></textarea>
+          <small id="contadorReferenciaDomicilio" class="text-muted">Máximo 150 caracteres. Caracteres actuales:
             0</small>
-          <div id="errorObservaciones" class="text-danger mt-1" style="display: none;">
+          <div id="errorReferenciaDomicilio" class="text-danger mt-1" style="display: none;">
             Has excedido el límite de 150 caracteres.
           </div>
         </div>
@@ -1246,5 +1246,46 @@
       <button type="button" class="btn btn-primary mt-3 next"
         onclick="showPreviewInModal()">Previsualizar</button>
     </div>
+    <button type="submit" class="btn btn-success">Enviar Formulario</button>
   </form>
 </main>
+
+<!-- modal para la previsualización -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <img src="<?php echo URL; ?>images/ICACIT_2025.jpg" alt="Logo ICACIT" class="modal-logo">
+        <h5 class="modal-title" id="previewModalLabel">Previsualización del Formulario de Inscripción -
+          Evaluador ICACIT</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="previewModalBody">
+        <!-- El contenido de la previsualización se inserta aquí -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-info" onclick="downloadPDF()">Descargar PDF</button>
+        <!-- <button type="submit" class="btn btn-success" id="enviarFormulario" onclick="">Enviar Formulario</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- modal de alerta -->
+<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-danger" id="alertModalLabel"><i class="fa-solid fa-triangle-exclamation fa-fade"></i> Alerta</h4>
+      </div>
+      <div class="modal-body" id="alertModalBody">
+        <!-- Mensaje de alerta irá aquí -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

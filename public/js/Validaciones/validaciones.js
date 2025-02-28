@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Validación de textarea de sección 1 (referencias domicilio)
-    validarTextarea("observaciones", "contadorObservaciones", "errorObservaciones", 150);
+    validarTextarea("referenciaDomicilio", "contadorReferenciaDomicilio", "errorReferenciaDomicilio", 150);
 
     // Validación de textarea de sección 4 (funciones principales)
     validarTextarea("funcionesPrincipales", "contadorObservacionesPrincipales", "errorObservaciones", 150);

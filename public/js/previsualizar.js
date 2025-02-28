@@ -264,8 +264,9 @@ async function downloadPDF() {
     let currentY = margin;
     const pageWidth = pdf.internal.pageSize.getWidth() - margin * 2;
 
+    //! estado moderado (mejorar URL del logo)
     const logoImg = new Image();
-    logoImg.src = '/assets/ICACIT_2025.jpg';
+    logoImg.src= 'http://localhost/form_evaluadores_ICACIT/public/assets/ICACIT_2025.jpg';
 
     logoImg.onload = async function () {
         const logoHeight = (logoImg.height * 25) / logoImg.width;
