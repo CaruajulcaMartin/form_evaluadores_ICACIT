@@ -21,6 +21,9 @@
 <script src="<?php echo URL; ?>js/services/serviceNationalities.js"></script>
 <script src="<?php echo URL; ?>js/services/servicePhone.js"></script>
 
+<!-- script para procesar los datos de las tablas -->
+<script src="<?php echo APP; ?>public/js/recolectarDatosTablas.js"></script>
+
 <!-- Bootstrap 5 -->
 <script>
   // Inicializa todos los tooltips en la página

@@ -45,7 +45,7 @@
         </div>
         <div class="col-md-3">
           <label class="form-label">Numero de Identidad:<span class="text-danger">*</span></label>
-          <input type="text" name="numDoc" id="tipoIdentidad" class="form-control" required disabled>
+          <input type="text" name="numDoc" id="numDoc" class="form-control" required disabled>
         </div>
 
         <!-- archivo de identidad adjunto -->

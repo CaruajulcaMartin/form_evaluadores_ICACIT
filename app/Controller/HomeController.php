@@ -22,43 +22,56 @@ class HomeController
     }
 
     public function enviarFormulario()
-{
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        echo json_encode(["status" => "error", "message" => "Método no permitido"]);
-        return;
-    }
-
-    try {
-        $postulante = $_POST;
-        $numDoc = $_POST["numDoc"];
-
-        if (empty($numDoc)) {
-            throw new Exception("Número de documento requerido");
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(["status" => "error", "message" => "Método no permitido"]);
+            return;
         }
 
-        // Procesar archivos subidos
-        $fotoPerfil = $this->procesarArchivo($_FILES['fotoPerfil'] ?? null, APP . 'view/admin/upload/foto_perfil/', "foto_perfil_$numDoc");
-        $pdfDocumento = $this->procesarArchivo($_FILES['pdfDocumentoIdentidad'] ?? null, APP . 'view/admin/upload/documentos/', "pdf_documento_identidad_$numDoc");
+        try {
+            $postulante = $_POST;
+            $numDoc = $_POST["numDoc"];
 
-        // Agregar los nombres de los archivos al arreglo de datos del formulario
-        $postulante['fotoPerfil'] = $fotoPerfil;
-        $postulante['pdfDocumentoIdentidad'] = $pdfDocumento;
+            if (empty($numDoc)) {
+                throw new Exception("Número de documento requerido");
+            }
 
-        // Llamar al método del modelo para insertar todos los datos
-        $resultado = $this->model->insertPersonalInfo($postulante);
+            // Procesar archivos subidos
+            $fotoPerfil = $this->procesarArchivo($_FILES['fotoPerfil'] ?? null, APP . 'view/admin/upload/foto_perfil/', "foto_perfil_$numDoc");
+            $pdfDocumento = $this->procesarArchivo($_FILES['pdfDocumentoIdentidad'] ?? null, APP . 'view/admin/upload/documentos/', "pdf_documento_identidad_$numDoc");
+            $pdfFormacion = $this->procesarArchivo($_FILES['pdfFormacionAcademica'] ?? null, APP . 'view/admin/upload/documentos/formacion-academica/', "pdf_formacion_academica_$numDoc");
 
-        if ($resultado) {
+            // Insertar datos personales
+            $postulante['fotoPerfil'] = $fotoPerfil;
+            $postulante['pdfDocumentoIdentidad'] = $pdfDocumento;
+            $postulanteId = $this->model->insertPersonalInfo($postulante);
+
+            if (!$postulanteId) {
+                throw new Exception("Error al guardar los datos personales");
+            }
+
+            // Insertar formación académica
+            /*
+            $formacionData = [
+                'postulante_id' => $postulanteId,
+                'tipo_formacion' => $postulante['tipoFormacion'],
+                'pais' => $postulante['paisFormacion'],
+                'ano_graduacion' => $postulante['anoGraduacion'],
+                'universidad' => $postulante['institucionEducativa'],
+                'nombre_grado' => $postulante['nombreGrado'],
+                'pdf_formacion_academica' => $pdfFormacion
+            ];
+
+            if (!$this->model->insertFormacionAcademica($formacionData)) {
+                throw new Exception("Error al guardar la formación académica");
+            }
+            */
+
             echo json_encode(["status" => "success", "message" => "Formulario enviado con éxito"]);
-        } else {
-            throw new Exception("Error al guardar los datos en la base de datos");
+        } catch (Exception $e) {
+            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
         }
-    } catch (Exception $e) {
-        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
     }
-
-    // Imprimir los datos del postulante (para depuración)
-    // print_r($postulante);
-}
 
     private function procesarArchivo($archivo, $directorio, $nombreBase)
     {

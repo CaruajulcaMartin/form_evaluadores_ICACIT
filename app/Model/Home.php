@@ -8,10 +8,12 @@ use Exception;
 
 class Home extends Model
 {
+    //funcion para insertar informacion de la seccion 1 y 2
     public function insertPersonalInfo($data)
     {
         //tabla de informacion personal
         try {
+
             $sql1 = "INSERT INTO postulante (
             primer_apellido, segundo_apellido, nombres_completos, tipo_identidad, numero_identidad, 
             pdf_documento_identidad, nacionalidad, fecha_nacimiento, estado_civil, foto_perfil, 
@@ -72,6 +74,27 @@ class Home extends Model
                 ':correo_empleador' => $data['correoEmpleador']
             ]);
 
+            //! actulmente no se agrega los archivos de formacion academica
+            //tabla de formacion academica
+            $sql3 = "INSERT INTO formacionacademica (
+                postulante_id, tipo_formacion, pais, ano_graduacion, 
+                universidad, nombre_grado, pdf_formacion_academica
+                ) VALUES (
+                    :postulante_id, :tipo_formacion, :pais, :ano_graduacion, 
+                    :universidad, :nombre_grado, :pdf_formacion_academica
+                )";
+
+            $query3 = $this->db->prepare($sql3);
+            $query3->execute([
+                ':postulante_id' => $this->db->lastInsertId(),
+                ':tipo_formacion' => $data['tipoFormacion'],
+                ':pais' => $data['paisFormacion'],
+                ':ano_graduacion' => $data['anoGraduacion'],
+                ':universidad' => $data['institucionEducativa'],
+                ':nombre_grado' => $data['nombreGrado'],
+                ':pdf_formacion_academica' => $data['pdfFormacionAcademica']
+            ]);
+
             return true;
         } catch (Exception $e) {
             error_log("Error en insertPersonalInfo: " . $e->getMessage()); // Guarda el error en logs
@@ -79,4 +102,38 @@ class Home extends Model
             return false;
         }
     }
+
+    /*
+    //funcion para insertar informacion de la seccion 3
+    public function insertFormacionAcademica($data)
+    {
+        try {
+            $sql3 = "INSERT INTO formacionacademica (
+                postulante_id, tipo_formacion, pais, ano_graduacion, 
+                universidad, nombre_grado, pdf_formacion_academica
+                ) VALUES (
+                    :postulante_id, :tipo_formacion, :pais, :ano_graduacion, 
+                    :universidad, :nombre_grado, :pdf_formacion_academica
+                )";
+
+            $query3 = $this->db->prepare($sql3);
+            $query3->execute([
+                ':postulante_id' => $this->db->lastInsertId(),
+                ':tipo_formacion' => $data['tipoFormacion'],
+                ':pais' => $data['paisFormacion'],
+                ':ano_graduacion' => $data['anoGraduacion'],
+                ':universidad' => $data['institucionEducativa'],
+                ':nombre_grado' => $data['nombreGrado'],
+                ':pdf_formacion_academica' => $data['pdfFormacionAcademica']
+            ]);
+
+            return true;
+        } catch (Exception $e) {
+            // Revertir la transacción en caso de error
+            $this->db->rollBack();
+            error_log("Error en insertFormacionAcademica: " . $e->getMessage());
+            return false;
+        }
+    }
+    */
 }
