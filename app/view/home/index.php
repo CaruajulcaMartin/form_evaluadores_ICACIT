@@ -1,7 +1,7 @@
-
 <header class="container header">
   <img src="<?php echo URL; ?>images/ICACIT_2025.jpg" alt="logo de ICACIT">
-  <h1 class="title">Formulario de Inscripción - Evaluador ICACIT</h1>
+  <!-- nuevo titulo -->
+  <h2 class="title text-center" style="color: #002060">Formulario de Inscripción al Programa de Formación de Evaluadores ICACIT</h2>
 </header>
 
 <main class="container main">
@@ -125,7 +125,7 @@
               class="text-danger">*</span></label>
           <div class="input-group">
             <span class="input-group-text" id="basic-addon3">https://example.com/</span>
-            <input type="url"  name="redProfesional" class="form-control" id="basic-url"
+            <input type="url" name="redProfesional" class="form-control" id="basic-url"
               placeholder="LinkedIn, red interna de la universidad o empresa"
               aria-describedby="basic-addon3 basic-addon4" required>
           </div>
@@ -331,7 +331,7 @@
         </div>
         <!-- Botón para agregar un nuevo registro -->
         <div class="col-md-3 d-flex align-items-end">
-          <button type="button" class="btn btn-success btn-agregar" data-bs-toggle="tooltip"
+          <button type="button" class="btn btn-success btn-agregar" id="btnAgregarFormacion" data-bs-toggle="tooltip"
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre tu formación académica"
             onclick="agregarFormacion()">
@@ -350,7 +350,7 @@
       </div>
 
       <!-- Tabla para mostrar los registros agregados -->
-      <table class="table table-striped required">
+      <table class="table table-striped required" id="tablaFormacionAcademica">
         <thead>
           <tr>
             <th scope="col">Tipo</th>
@@ -585,22 +585,22 @@
         <div class="row g-3 formulario">
           <div class="col-md-2">
             <label class="form-label">Año:<span class="text-danger">*</span></label>
-            <input type="number" class="form-control" name="anoCertificado" id="anoCertificado"
+            <input type="number" class="form-control" name="anoCertificadoAmbitoEvaluacion" id="anoCertificado"
               min="1900" max="2099" step="1">
           </div>
           <div class="col-md-3">
             <label class="form-label">Institución:<span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="institucion" id="institucion">
+            <input type="text" class="form-control" name="institucionAmbitoEvaluacion" id="institucion">
           </div>
           <div class="col-md-3">
             <label class="form-label">Nombre del Curso o Seminario:<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="cursoSeminario" id="cursoSeminario">
+            <input type="text" class="form-control" name="cursoSeminarioAmbitoEvaluacion" id="cursoSeminario">
           </div>
           <div class="col-md-2">
             <label class="form-label">Duración (8 horas mínimo):<span
                 class="text-danger">*</span></label>
-            <input type="number" class="form-control" name="duracion" id="duracion" min="8" max="360"
+            <input type="number" class="form-control" name="duracionAmbitoEvaluacion" id="duracion" min="8" max="360"
               step="1">
           </div>
 
@@ -657,34 +657,34 @@
       <div class="row g-3 formulario">
         <div class="col-md-4">
           <label class="form-label">Institución o Empresa:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="institucionEmpresa" id="institucionEmpresa">
+          <input type="text" class="form-control" name="institucionEmpresaExperienciaLaboral" id="institucionEmpresa">
         </div>
         <div class="col-md-4">
           <label class="form-label">Cargo desempeñado:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="cargoDesempeñado" id="cargoDesempeñado">
+          <input type="text" class="form-control" name="cargoDesempeñadoExperienciaLaboral" id="cargoDesempeñado">
         </div>
         <div class="col-md-2">
           <label class="form-label">Fecha de Inicio:<span class="text-danger">*</span></label>
-          <input type="date" class="form-control" name="fechaInicio" id="fechaInicio">
+          <input type="date" class="form-control" name="fechaInicioExperienciaLaboral" id="fechaInicio">
         </div>
         <div class="col-md-2">
           <label class="form-label">Fecha de Retiro:<span class="text-danger">*</span></label>
-          <input type="date" class="form-control" name="fechaRetiro" id="fechaRetiro">
+          <input type="date" class="form-control" name="fechaRetiroExperienciaLaboral" id="fechaRetiro">
         </div>
         <div class="col-md-4">
           <label class="form-label">País:<span class="text-danger">*</span></label>
-          <select class="form-control" name="paisEmpresa" id="paisEmpresa">
+          <select class="form-control" name="paisEmpresaExperienciaLaboral" id="paisEmpresa">
             <option value="">Seleccionar un país</option>
           </select>
           <!-- <input type="text" class="form-control" name="paisEmpresa" id="paisEmpresa"> -->
         </div>
         <div class="col-md-4">
           <label class="form-label">Ciudad:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="ciudad" id="ciudadEmpresa">
+          <input type="text" class="form-control" name="ciudadExperienciaLaboral" id="ciudadEmpresa">
         </div>
         <div class="col-md-4">
           <label class="form-label">Adjuntar PDF:<span class="text-danger">*</span></label>
-          <input type="file" class="form-control" name="pdfExperiencia" id="pdfExperiencia"
+          <input type="file" class="form-control" name="pdfExperienciaLaboral" id="pdfExperiencia"
             accept="application/pdf">
           <small class="form-text text-muted">Solo se permiten archivos PDF con un tamaño máximo de 5
             MB.</small>
@@ -757,28 +757,28 @@
         <h5>(Dictado de talleres, capacitaciones y/o seminarios)</h5>
         <div class="col-md-4">
           <label class="form-label">Nombre de la Institución:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="institucionDocente" id="institucionDocente">
+          <input type="text" class="form-control" name="institucionExperienciaDocente" id="institucionDocente">
         </div>
         <div class="col-md-4">
           <label class="form-label">País:<span class="text-danger">*</span></label>
-          <select class="form-control" name="paisDocente" id="paisDocente">
+          <select class="form-control" name="paisExperienciaDocente" id="paisDocente">
             <option value="">Seleccionar un país</option>
           </select>
           <!-- <input type="text" class="form-control" name="paisDocente" id="paisDocente"> -->
         </div>
         <div class="col-md-4">
           <label class="form-label">Ciudad:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="ciudadDocente" id="ciudadDocente">
+          <input type="text" class="form-control" name="ciudadExperienciaDocente" id="ciudadDocente">
         </div>
         <div class="col-md-6">
           <label class="form-label">Nombre del Programa Profesional o Unidad Funcional de la Empresa:<span
               class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="programaProfesional" id="programaProfesional">
+          <input type="text" class="form-control" name="programaProfesionalExperienciaDocente" id="programaProfesional">
         </div>
         <div class="col-md-6">
           <label class="form-label">Curso o Capacitación Impartido:<span
               class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="cursosImpartidos" id="cursosImpartidos">
+          <input type="text" class="form-control" name="cursoCapacitacionImpartidoExperienciaDocente" id="cursosImpartidos">
         </div>
         <div class="col-md-12">
           <label class="form-label">Funciones Principales:</label>
@@ -794,11 +794,11 @@
 
         <div class="col-md-4">
           <label class="form-label">Fecha de Inicio:<span class="text-danger">*</span></label>
-          <input type="date" class="form-control" name="fechaInicioDocente" id="fechaInicioDocente">
+          <input type="date" class="form-control" name="fechaInicioExperienciaDocente" id="fechaInicioDocente">
         </div>
         <div class="col-md-4">
           <label class="form-label">Fecha de Retiro:<span class="text-danger">*</span></label>
-          <input type="date" class="form-control" name="fechaRetiroDocente" id="fechaRetiroDocente">
+          <input type="date" class="form-control" name="fechaRetiroExperienciaDocente" id="fechaRetiroDocente">
         </div>
         <div class="col-md-4">
           <label class="form-label">Adjuntar PDF:<span class="text-danger">*</span></label>
@@ -829,6 +829,7 @@
             <th scope="col">Ciudad</th>
             <th scope="col">Nombre del Programa</th>
             <th scope="col">Curso o Capacitación</th>
+            <th scope="col">Funciones Principales</th>
             <th scope="col">Fecha Inicio</th>
             <th scope="col">Fecha Fin</th>
             <th scope="col">Anexos</th>
@@ -984,6 +985,9 @@
       <table class="table table-striped">
         <thead>
           <tr>
+            <th scope="col">Agencia Acreditadora</th>
+            <th scope="col">Año Inicio</th>
+            <th scope="col">Año Vigencia</th>
             <th scope="col">Nombre Entidad</th>
             <th scope="col">Programa</th>
             <th scope="col">Cargo</th>
@@ -1059,6 +1063,11 @@
       </div>
 
       <div class="row g-3 formulario">
+        <!-- <div class="col-md-2">
+          <label class="form-label">Año:</label>
+          <input type="number" class="form-control" name="fechaPublicacion" id="fechaPublicacion
+            min="1900" max="2099" step="1">
+        </div> -->
         <div class="col-md-2">
           <label class="form-label">Año:</label>
           <input type="date" class="form-control" name="fechaPublicacion" id="fechaPublicacion">
@@ -1206,7 +1215,7 @@
         </h5>
         <div class="col-12">
           <!-- <label class="form-label">Carta de Presentación:<span class="text-danger">*</span></label> -->
-          <textarea name="descripcionContribucion" id="descripcionContribucion" class="form-control"
+          <textarea name="cartaPresentacion" id="descripcionContribucion" class="form-control"
             rows="6" required></textarea>
           <small id="contadorPalabras" class="text-muted">Maximo 400 palabras. Palabras actuales:
             0</small>

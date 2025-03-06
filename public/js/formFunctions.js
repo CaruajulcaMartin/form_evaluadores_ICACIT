@@ -303,11 +303,12 @@ function agregarExperienciaDocente() {
         document.getElementById("ciudadDocente"),
         document.getElementById("programaProfesional"),
         document.getElementById("cursosImpartidos"),
+        document.getElementById("funcionesPrincipales"), // funciona correctamente en pestaña incognita
         document.getElementById("fechaInicioDocente"),
         document.getElementById("fechaRetiroDocente")
     ];
 
-    let funcionesPrincipales = document.getElementById("funcionesPrincipales");
+    // let funcionesPrincipales = document.getElementById("funcionesPrincipales");
 
     let pdfInput = document.getElementById("pdfExperienciaDocente");
 
@@ -324,7 +325,7 @@ function agregarExperienciaDocente() {
 
     let valores = campos.map(campo => campo.value);
     crearFila("tablaExperienciaDocente", valores, pdfInput.files[0]);
-    limpiarCampos([...campos, funcionesPrincipales, pdfInput]);
+    limpiarCampos([...campos, pdfInput]);
 }
 
 // Funcion para agregar experiencia comite
@@ -347,6 +348,9 @@ function agregarExperienciaComite() {
 //Funcion para agregar como par evaluador
 function agregarExperienciaEvaluador(){
     let campos = [
+        document.getElementById("agenciaAcreditadora"), // funciona correctamente en pestaña incognita
+        document.getElementById("fechaInicioEvaluador"), // funciona correctamente en pestaña incognita
+        document.getElementById("fechaRetiroEvaluador"), // funciona correctamente en pestaña incognita
         document.getElementById("nombreEntidad"),
         document.getElementById("programaEvaluador"),
         document.getElementById("cargoEvaluador"),

@@ -22,7 +22,13 @@
 <script src="<?php echo URL; ?>js/services/servicePhone.js"></script>
 
 <!-- script para procesar los datos de las tablas -->
-<script src="<?php echo APP; ?>public/js/recolectarDatosTablas.js"></script>
+<script src="<?php echo URL; ?>js/procesar_tablas/recolectarDatosTablas.js"></script>
+<script src="<?php echo URL; ?>js/procesar_tablas/recolectarDatosTablasExperiencia.js"></script>
+<script src="<?php echo URL; ?>js/procesar_tablas/recolectarDatosTablasInvestigaciones.js"></script>
+<script src="<?php echo URL; ?>js/procesar_tablas/recolectarDatosTablasPremios.js"></script>
+
+<!-- enviar formulario script -->
+<script src="<?php echo URL; ?>js/modal_firma.js"></script>
 
 <!-- Bootstrap 5 -->
 <script>
@@ -32,6 +38,8 @@
     return new bootstrap.Tooltip(tooltipTriggerEl)
   })
 </script>
+
+<script> var url = "<?php echo URL; ?>"; </script>
 
 </body>
 
