@@ -39,8 +39,7 @@ class HomeController
             // Procesar archivos subidos
             $fotoPerfil = $this->procesarArchivo($_FILES['fotoPerfil'] ?? null, APP . 'view/admin/upload/foto_perfil/', "foto_perfil_$numDoc");
             $pdfDocumento = $this->procesarArchivo($_FILES['pdfDocumentoIdentidad'] ?? null, APP . 'view/admin/upload/documentos/', "pdf_documento_identidad_$numDoc");
-            // $pdfFormacion = $this->procesarArchivo($_FILES['pdfFormacionAcademica'] ?? null, APP . 'view/admin/upload/documentos/formacion-academica/', "pdf_formacion_academica_$numDoc");
-
+            
             // *Informacion Personal - Insertar datos personales
             $postulante['fotoPerfil'] = $fotoPerfil;
             $postulante['pdfDocumentoIdentidad'] = $pdfDocumento;
@@ -51,12 +50,11 @@ class HomeController
             }
 
             //!* Formación Académica
-            // Obtener y procesar los datos de formación académica
             if (!empty($_POST['formacionAcademica'])) {
-                foreach ($_POST['formacionAcademica'] as $formacion) {
-                    // ! no procesa el pdf
-                    $pdfFormacion = $this->procesarArchivo($_FILES['pdfFormacionAcademica'] ?? null, APP . 'view/admin/upload/documentos/formacion-academica/', "pdf_formacion_academica_$numDoc");
-
+                foreach ($_POST['formacionAcademica'] as $index => $formacion) {
+                    // Procesar el archivo PDF correspondiente a esta fila
+                    $pdfFormacion = $this->procesarArchivo($formacion['pdf'] ?? null, APP . 'view/admin/upload/formacion/', "pdf_formacion_academica_$index");
+            
                     $formacionData = [
                         'postulante_id' => $postulanteId,
                         'tipo_formacion' => $formacion['tipoFormacion'],
@@ -64,11 +62,13 @@ class HomeController
                         'ano_graduacion' => $formacion['anoGraduacion'],
                         'universidad' => $formacion['institucionEducativa'],
                         'nombre_grado' => $formacion['nombreGrado'],
-                        'pdf_formacion_academica' => $pdfFormacion
+                        'pdf_formacion_academica' => $pdfFormacion // Puede ser null si no se envió un archivo
                     ];
+            
+                    error_log(print_r($formacionData, true));
 
                     if (!$this->model->insertFormacionAcademica($formacionData)) {
-                        throw new Exception("Error al guardar la formación académica");
+                        throw new Exception("Error al guardar la formación académica en la fila $index.");
                     }
                 }
             }
@@ -326,6 +326,7 @@ class HomeController
         }
     }
 
+    //? Función para procesar y guardar un archivo
     private function procesarArchivo($archivo, $directorio, $nombreBase)
     {
         if (!$archivo || empty($archivo['name'])) {

@@ -1216,7 +1216,7 @@
         <div class="col-12">
           <!-- <label class="form-label">Carta de Presentación:<span class="text-danger">*</span></label> -->
           <textarea name="cartaPresentacion" id="descripcionContribucion" class="form-control"
-            rows="6" required></textarea>
+            rows="6"></textarea>
           <small id="contadorPalabras" class="text-muted">Maximo 400 palabras. Palabras actuales:
             0</small>
           <div id="mensajeError" class="text-danger mt-1" style="display: none;"><b>Nota:</b> Has excedido

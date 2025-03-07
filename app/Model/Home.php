@@ -130,7 +130,7 @@ class Home extends Model
                 ':ano_graduacion' => $data['ano_graduacion'],
                 ':universidad' => $data['universidad'],
                 ':nombre_grado' => $data['nombre_grado'],
-                ':pdf_formacion_academica' => $data['pdf_formacion_academica'] ?? '' //! aun no se procesa el pdf de la formacion academica
+                ':pdf_formacion_academica' => $data['pdf_formacion_academica'] //! aun no se procesa el pdf de la formacion academica
             ]);
 
             return true; // Retornar true si la inserción fue exitosa

@@ -5,26 +5,38 @@ $(document).ready(function () {
         // Crear un objeto FormData para tabla de formación académica
         const formData = new FormData(this);
 
-        // crear un objeto FormData para tabla de idiomas
-        // const formDataIdiomas = new FormData();
-
         // **Recolectar datos de la tabla dinámica de formación académica
         $("#tablaFormacion tr").each(function (index) {
             const row = $(this);
             if (row.find("td").length > 0) {
+                console.log(`Recolectando datos de la fila ${index+1} de la tabla de formación académica`);
+                console.log(`  tipoFormacion: ${row.find("td:eq(0)").text()}`);
+                console.log(`  paisFormacion: ${row.find("td:eq(1)").text()}`);
+                console.log(`  anoGraduacion: ${row.find("td:eq(2)").text()}`);
+                console.log(`  institucionEducativa: ${row.find("td:eq(3)").text()}`);
+                console.log(`  nombreGrado: ${row.find("td:eq(4)").text()}`);
+
                 formData.append(`formacionAcademica[${index}][tipoFormacion]`, row.find("td:eq(0)").text());
                 formData.append(`formacionAcademica[${index}][paisFormacion]`, row.find("td:eq(1)").text());
                 formData.append(`formacionAcademica[${index}][anoGraduacion]`, row.find("td:eq(2)").text());
                 formData.append(`formacionAcademica[${index}][institucionEducativa]`, row.find("td:eq(3)").text());
                 formData.append(`formacionAcademica[${index}][nombreGrado]`, row.find("td:eq(4)").text());
 
-                // ! no procesa el pdf de la formacion academica
+                // ! no procesa el pdf de la formacion academica falta mejorar el recorrido en tabla
                 const fileInput = row.find("td:eq(5)").find("input[type='file']");
                 if (fileInput.length > 0 && fileInput[0].files.length > 0) {
+                    console.log(`  pdf: ${fileInput[0].files[0].name}`);
                     formData.append(`formacionAcademica[${index}][pdf]`, fileInput[0].files[0]);
+                } else {
+                    console.log(`  pdf: No hay archivo seleccionado`);
                 }
             }
         });
+
+        // Depuración: Imprimir el contenido de FormData
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
 
         // **Recolectar datos de la tabla dinámica de idiomas
         $("#tablaIdiomas tr").each(function (index) {

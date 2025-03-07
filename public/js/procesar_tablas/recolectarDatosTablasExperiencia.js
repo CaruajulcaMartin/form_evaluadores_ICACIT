@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $(document).on("submit", "#formularioEvaluador", function (event) { //? evento para enviar el formulario
+    $(document).on("#formularioEvaluador", function (event) { //? evento para enviar el formulario
         event.preventDefault();
 
         // Crear un objeto FormData para tabla de experiencia laboral
