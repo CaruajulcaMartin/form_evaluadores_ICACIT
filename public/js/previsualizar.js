@@ -264,9 +264,8 @@ async function downloadPDF() {
     let currentY = margin;
     const pageWidth = pdf.internal.pageSize.getWidth() - margin * 2;
 
-    //! estado moderado (mejorar URL del logo)
     const logoImg = new Image();
-    logoImg.src= 'http://localhost/form_evaluadores_ICACIT/public/assets/ICACIT_2025.jpg';
+    logoImg.src= url + 'assets/ICACIT_2025.jpg';
 
     logoImg.onload = async function () {
         const logoHeight = (logoImg.height * 25) / logoImg.width;
@@ -482,8 +481,12 @@ async function downloadPDF() {
             }
         }
 
-        // Agregar los PDF de las tablas de experiencia laboral
-        let seccionesUnicasExperiencia = [...new Set(anexosTablasExperienciaLaboral.map(anexo => anexo.seccion))]; // Obtener secciones únicas
+        // Agregar los PDF de las tablas de experiencia laboral y docente
+        let seccionesUnicasExperiencia = [...new Set([
+            ...anexosTablasExperienciaLaboral.map(anexo => anexo.seccion),
+            ...anexosTablasExperienciaDocente.map(anexo => anexo.seccion)
+        ])]; // Obtener secciones únicas de ambas tablas
+
         for (let seccion of seccionesUnicasExperiencia) {
             // Agregar un título general para la sección
             const titleAnexo = await finalPdf.addPage();
@@ -510,9 +513,18 @@ async function downloadPDF() {
                 });
             });
 
-            // Agregar los PDFs de la sección actual
-            const anexosSeccion = anexosTablasExperienciaLaboral.filter(anexo => anexo.seccion === seccion);
-            for (let anexo of anexosSeccion) {
+            // Agregar los PDFs de experiencia laboral de la sección actual
+            const anexosSeccionLaboral = anexosTablasExperienciaLaboral.filter(anexo => anexo.seccion === seccion);
+            for (let anexo of anexosSeccionLaboral) {
+                const arrayBuffer = await readFileAsArrayBuffer(anexo.file);
+                const pdfDoc = await PDFDocument.load(arrayBuffer);
+                const pages = await finalPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                pages.forEach(page => finalPdf.addPage(page));
+            }
+
+            // Agregar los PDFs de experiencia docente de la sección actual
+            const anexosSeccionDocente = anexosTablasExperienciaDocente.filter(anexo => anexo.seccion === seccion);
+            for (let anexo of anexosSeccionDocente) {
                 const arrayBuffer = await readFileAsArrayBuffer(anexo.file);
                 const pdfDoc = await PDFDocument.load(arrayBuffer);
                 const pages = await finalPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());

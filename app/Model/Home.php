@@ -8,7 +8,7 @@ use Exception;
 
 class Home extends Model
 {
-    // *Función para insertar información de la sección 1 y 2
+    // *Función para insertar información de la sección 1 y 2 (carta de presentacion)
     public function insertPersonalInfo($data)
     {
         try {
@@ -91,7 +91,7 @@ class Home extends Model
             $query3 = $this->db->prepare($sql3);
             $query3->execute([
                 ':postulante_id' => $postulanteId,
-                ':carta_presentacion' => $data['cartaPresentacion']
+                ':carta_presentacion' => $data['cartaPresentacion'] //! no esta registrando correctamente en la base de datos en el index deve estar REQUIERDO
             ]);
 
             // Confirmar la transacción
@@ -130,7 +130,7 @@ class Home extends Model
                 ':ano_graduacion' => $data['ano_graduacion'],
                 ':universidad' => $data['universidad'],
                 ':nombre_grado' => $data['nombre_grado'],
-                ':pdf_formacion_academica' => $data['pdf_formacion_academica'] //! aun no se procesa el pdf de la formacion academica
+                ':pdf_formacion_academica' => $data['pdf_formacion_academica']
             ]);
 
             return true; // Retornar true si la inserción fue exitosa
@@ -285,7 +285,7 @@ class Home extends Model
                 ':fecha_retiro' => $data['fecha_retiro'],
                 ':pais' => $data['pais'],
                 ':ciudad' => $data['ciudad'],
-                ':pdf_experiencia' => $data['pdf_experiencia'] ?? '' //! aun no se procesa el pdf de la experiencia laboral
+                ':pdf_experiencia' => $data['pdf_experiencia']
             ]);
 
             return true;
@@ -319,7 +319,7 @@ class Home extends Model
                 ':funciones_principales' => $data['funciones_principales'],
                 ':fecha_inicio' => $data['fecha_inicio'],
                 ':fecha_retiro' => $data['fecha_retiro'],
-                ':pdf_experiencia_docente' => $data['pdf_experiencia_docente'] //! aun no se procesa el pdf de la experiencia docente
+                ':pdf_experiencia_docente' => $data['pdf_experiencia_docente']
             ]);
 
             return true;

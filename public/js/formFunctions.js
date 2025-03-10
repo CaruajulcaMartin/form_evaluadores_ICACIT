@@ -2,8 +2,14 @@ let tipoPregradoAgregado = false;
 let tipoPosdoctoradoAgregado = false;
 let experienciaEvaluadorAgregada = 0;
 let fechasRegistradas = [];
+
 let anexosTablasFormacionAcademica = [];
 let anexosTablasExperienciaLaboral = [];
+let anexosTablasExperienciaDocente = [];
+
+let contadorFormacion = 0; // Contador global para el índice de formación académica
+let contadorExperiencia = 0; // Contador global para el índice de experiencia laboral
+let contadorExperienciaDocente = 0; // Contador global para el índice de experiencia docente
 
 // Función para mostrar el modal de alerta
 function mostrarAlerta(mensaje) {
@@ -48,7 +54,7 @@ function crearFila(tablaId, valores, incluirPDF = false) {
     let tabla = document.getElementById(tablaId);
     let fila = document.createElement("tr");
 
-    // Verificar si las fechas ya están registradas
+    // Verificar si las fechas ya están registradas (solo para tablas de experiencia)
     if (tablaId === "tablaExperiencia" || tablaId === "tablaExperienciaDocente" || tablaId === "tablaExperienciaComite") {
         let fechaInicio = valores[2]; // Asumiendo que la fecha de inicio está en la posición 2
         let fechaFin = valores[3]; // Asumiendo que la fecha de fin está en la posición 3
@@ -78,18 +84,37 @@ function crearFila(tablaId, valores, incluirPDF = false) {
         celdaAnexo.innerHTML = pdfIcon;
         fila.appendChild(celdaAnexo);
 
-        // Agregar el PDF al arreglo de anexos
-        /*if (tablaId === "tablaFormacion");
-        if (tablaId === "tablaExperiencia");
-        if (tablaId === "tablaExperienciaDocente");
-        
-        anexosTablas.push({file: incluirPDF});*/
+        // Determinar el nombre del input oculto según el tipo de tabla
+        let nombreInputOculto;
+        if (tablaId === "tablaFormacion") {
+            nombreInputOculto = `formacionAcademica[${contadorFormacion}][pdfFormacionAcademica]`;
+            contadorFormacion++;
+        } else if (tablaId === "tablaExperiencia") {
+            nombreInputOculto = `experienciaLaboral[${contadorExperiencia}][pdfExperienciaLaboral]`;
+            contadorExperiencia++;
+        } else if (tablaId === "tablaExperienciaDocente"){
+            nombreInputOculto = `experienciaDocente[${contadorExperienciaDocente}][pdfExperienciaDocente]`;
+            contadorExperienciaDocente++;
+        }
 
+        // Agregar un campo oculto para almacenar el nombre del archivo
+        let inputOculto = document.createElement("input");
+        inputOculto.type = "hidden";
+        inputOculto.name = nombreInputOculto; // Usar el nombre dinámico
+        inputOculto.value = incluirPDF.name; // Almacenar el nombre del archivo
+        fila.appendChild(inputOculto);
+
+        console.log(`PDF agregado al input oculto en la fila de la tabla ${tablaId}`);
+
+        // Agregar el PDF al arreglo de anexos correspondiente
         if (tablaId === "tablaFormacion") {
             anexosTablasFormacionAcademica.push({ file: incluirPDF });
-        } else if (tablaId === "tablaExperiencia" || tablaId === "tablaExperienciaComite") {
+        } else if (tablaId === "tablaExperiencia") {
             anexosTablasExperienciaLaboral.push({ file: incluirPDF });
+        } else if (tablaId === "tablaExperienciaDocente") {
+            anexosTablasExperienciaDocente.push({ file: incluirPDF });
         }
+        
     }
 
     // Agregar la celda de acción (botón para eliminar la fila)

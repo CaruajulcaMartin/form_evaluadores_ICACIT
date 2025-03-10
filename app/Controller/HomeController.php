@@ -37,9 +37,9 @@ class HomeController
             }
 
             // Procesar archivos subidos
-            $fotoPerfil = $this->procesarArchivo($_FILES['fotoPerfil'] ?? null, APP . 'view/admin/upload/foto_perfil/', "foto_perfil_$numDoc");
-            $pdfDocumento = $this->procesarArchivo($_FILES['pdfDocumentoIdentidad'] ?? null, APP . 'view/admin/upload/documentos/', "pdf_documento_identidad_$numDoc");
-            
+            $fotoPerfil = $this->procesarArchivo($_FILES['fotoPerfil'] ?? null, APP . 'view/admin/upload/fotos_perfil/', "foto_perfil_$numDoc");
+            $pdfDocumento = $this->procesarArchivo($_FILES['pdfDocumentoIdentidad'] ?? null, APP . 'view/admin/upload/documentos_identidad/', "pdf_documento_identidad_$numDoc");
+
             // *Informacion Personal - Insertar datos personales
             $postulante['fotoPerfil'] = $fotoPerfil;
             $postulante['pdfDocumentoIdentidad'] = $pdfDocumento;
@@ -52,22 +52,51 @@ class HomeController
             //!* Formación Académica
             if (!empty($_POST['formacionAcademica'])) {
                 foreach ($_POST['formacionAcademica'] as $index => $formacion) {
-                    // Procesar el archivo PDF correspondiente a esta fila
-                    $pdfFormacion = $this->procesarArchivo($formacion['pdf'] ?? null, APP . 'view/admin/upload/formacion/', "pdf_formacion_academica_$index");
+                    // Inicializar la variable para el archivo PDF
+                    $pdfFormacion = '';
             
+                    // Verificar si se envió un archivo PDF para esta fila
+                    if (!empty($_FILES['formacionAcademica']['tmp_name'][$index]['pdfFormacionAcademica'])) {
+                        // Preparar los datos del archivo para procesarArchivo
+                        $archivo = [
+                            'name' => $_FILES['formacionAcademica']['name'][$index]['pdfFormacionAcademica'],
+                            'tmp_name' => $_FILES['formacionAcademica']['tmp_name'][$index]['pdfFormacionAcademica'],
+                            'size' => $_FILES['formacionAcademica']['size'][$index]['pdfFormacionAcademica'],
+                            'error' => $_FILES['formacionAcademica']['error'][$index]['pdfFormacionAcademica']
+                        ];
+            
+                        // Procesar el archivo PDF
+                        try {
+                            $pdfFormacion = $this->procesarArchivo(
+                                $archivo, // Datos del archivo
+                                APP . 'view/admin/upload/formacion_academica/', // Ruta de almacenamiento
+                                "pdf_formacion_academica_$numDoc _$index " // Nombre base del archivo
+                            );
+                        } catch (Exception $e) {
+                            error_log("Error al procesar el archivo PDF en la fila $index: " . $e->getMessage());
+                            throw new Exception("Error al procesar el archivo PDF en la fila $index: " . $e->getMessage());
+                        }
+                    } else {
+                        error_log("No se encontró un archivo PDF para la fila $index.");
+                    }
+            
+                    // Preparar los datos de formación académica
                     $formacionData = [
                         'postulante_id' => $postulanteId,
-                        'tipo_formacion' => $formacion['tipoFormacion'],
-                        'pais' => $formacion['paisFormacion'],
-                        'ano_graduacion' => $formacion['anoGraduacion'],
-                        'universidad' => $formacion['institucionEducativa'],
-                        'nombre_grado' => $formacion['nombreGrado'],
-                        'pdf_formacion_academica' => $pdfFormacion // Puede ser null si no se envió un archivo
+                        'tipo_formacion' => $formacion['tipoFormacion'] ?? null,
+                        'pais' => $formacion['paisFormacion'] ?? null,
+                        'ano_graduacion' => $formacion['anoGraduacion'] ?? null,
+                        'universidad' => $formacion['institucionEducativa'] ?? null,
+                        'nombre_grado' => $formacion['nombreGrado'] ?? null,
+                        'pdf_formacion_academica' => $pdfFormacion // Puede ser una cadena vacía si no se envió un archivo
                     ];
             
-                    error_log(print_r($formacionData, true));
-
+                    // Registrar los datos en el log para depuración
+                    error_log("Datos de formación académica (fila $index): " . print_r($formacionData, true));
+            
+                    // Insertar los datos en la base de datos
                     if (!$this->model->insertFormacionAcademica($formacionData)) {
+                        error_log("Error al guardar la formación académica en la fila $index.");
                         throw new Exception("Error al guardar la formación académica en la fila $index.");
                     }
                 }
@@ -143,9 +172,37 @@ class HomeController
 
             //!* experiencia laboral
             if (!empty($_POST['experienciaLaboral'])) {
-                foreach ($_POST['experienciaLaboral'] as $experienciaLaboral) {
+                foreach ($_POST['experienciaLaboral'] as $index => $experienciaLaboral) {
                     // ! no procesa el pdf de la experiencia laboral
-                    $pdfExperienciaLaboral = $this->procesarArchivo($_FILES['pdfExperienciaLaboral'] ?? null, APP . 'view/admin/upload/documentos/experiencia_laboral/', "pdf_experiencia_$numDoc");
+                    // Inicializar la variable para el archivo PDF
+                    $pdfExperienciaLaboral = '';
+            
+                    // Verificar si se envió un archivo PDF para esta fila
+                    if (!empty($_FILES['experienciaLaboral']['tmp_name'][$index]['pdfExperienciaLaboral'])) {
+                        // Preparar los datos del archivo para procesarArchivo
+                        $archivo = [
+                            'name' => $_FILES['experienciaLaboral']['name'][$index]['pdfExperienciaLaboral'],
+                            'tmp_name' => $_FILES['experienciaLaboral']['tmp_name'][$index]['pdfExperienciaLaboral'],
+                            'size' => $_FILES['experienciaLaboral']['size'][$index]['pdfExperienciaLaboral'],
+                            'error' => $_FILES['experienciaLaboral']['error'][$index]['pdfExperienciaLaboral']
+                        ];
+            
+                        // Procesar el archivo PDF
+                        try {
+                            $pdfExperienciaLaboral = $this->procesarArchivo(
+                                $archivo, // Datos del archivo
+                                APP . 'view/admin/upload/experiencia_laboral/', // Ruta de almacenamiento
+                                "pdf_experiencia_laboral_$numDoc _$index" // Nombre base del archivo
+                            );
+                        } catch (Exception $e) {
+                            error_log("Error al procesar el archivo PDF en la fila $index: " . $e->getMessage());
+                            throw new Exception("Error al procesar el archivo PDF en la fila $index: " . $e->getMessage());
+                        }
+                    } else {
+                        error_log("No se encontró un archivo PDF para la fila $index.");
+                    }
+            
+                    // Guardar los datos de la experiencia laboral
                     $experienciaLaboralData = [
                         'postulante_id' => $postulanteId,
                         'institucion_empresa' => $experienciaLaboral['institucionEmpresaExperienciaLaboral'],
@@ -165,9 +222,36 @@ class HomeController
 
             //!* experencia docente
             if (!empty($_POST['experienciaDocente'])) {
-                foreach ($_POST['experienciaDocente'] as $experienciaDocente) {
-                    // ! no procesa el pdf de la experiencia docente
-                    $pdfExperienciaDocente = $this->procesarArchivo($_FILES['pdfExperienciaDocente'] ?? null, APP . 'view/admin/upload/documentos/experiencia_docente/', "pdf_experiencia_$numDoc");
+                foreach ($_POST['experienciaDocente'] as $index => $experienciaDocente) {
+                    // Inicializar la variable para el archivo PDF
+                    $pdfExperienciaDocente = '';
+            
+                    // Verificar si se envió un archivo PDF para esta fila
+                    if (!empty($_FILES['experienciaDocente']['tmp_name'][$index]['pdfExperienciaDocente'])) {
+                        // Preparar los datos del archivo para procesarArchivo
+                        $archivo = [
+                            'name' => $_FILES['experienciaDocente']['name'][$index]['pdfExperienciaDocente'],
+                            'tmp_name' => $_FILES['experienciaDocente']['tmp_name'][$index]['pdfExperienciaDocente'],
+                            'size' => $_FILES['experienciaDocente']['size'][$index]['pdfExperienciaDocente'],
+                            'error' => $_FILES['experienciaDocente']['error'][$index]['pdfExperienciaDocente']
+                        ];
+            
+                        // Procesar el archivo PDF
+                        try {
+                            $pdfExperienciaDocente = $this->procesarArchivo(
+                                $archivo, // Datos del archivo
+                                APP . 'view/admin/upload/experiencia_laboral/experiencia_docente/', // Ruta de almacenamiento
+                                "pdf_experiencia_docente_$numDoc _$index" // Nombre base del archivo
+                            );
+                        } catch (Exception $e) {
+                            error_log("Error al procesar el archivo PDF en la fila $index: " . $e->getMessage());
+                            throw new Exception("Error al procesar el archivo PDF en la fila $index: " . $e->getMessage());
+                        }
+                    } else {
+                        error_log("No se encontró un archivo PDF para la fila $index.");
+                    }
+            
+                    // Guardar los datos de la experiencia laboral
                     $experienciaDocenteData = [
                         'postulante_id' => $postulanteId,
                         'institucion' => $experienciaDocente['institucionExperienciaDocente'],
@@ -175,7 +259,7 @@ class HomeController
                         'ciudad' => $experienciaDocente['ciudadExperienciaDocente'],
                         'programa_profesional' => $experienciaDocente['programaProfesionalExperienciaDocente'],
                         'curso_capacitacion_impartido' => $experienciaDocente['cursoCapacitacionImpartidoExperienciaDocente'],
-                        'funciones_principales' => $experienciaDocente['funcionesPrincipales'] ?? null,  //! falta mejorar el procesamiento de las funciones principales
+                        'funciones_principales' => $experienciaDocente['funcionesPrincipales'],
                         'fecha_inicio' => $experienciaDocente['fechaInicioExperienciaDocente'],
                         'fecha_retiro' => $experienciaDocente['fechaRetiroExperienciaDocente'],
                         'pdf_experiencia_docente' => $pdfExperienciaDocente
@@ -284,7 +368,7 @@ class HomeController
                 $condutaEtica = $_POST['condutaEtica'] ? 1 : 0; // Convertir a entero (1 para verdadero, 0 para falso)
                 $condutaEticaValores = $_POST['condutaEticaValores'] ? 1 : 0; // Convertir a entero (1 para verdadero, 0 para falso)
                 $firmaBase64 = $_POST['firma'];
-                $nombreFirma = "firma_" . $numDoc. ".png"; // Nombre de la firma
+                $nombreFirma = "firma_" . $numDoc . ".png"; // Nombre de la firma
 
                 // Validar si existe la firma
                 if (empty($firmaBase64)) {
@@ -306,7 +390,7 @@ class HomeController
                 if (file_put_contents($rutaCompleta, $firmaImagen) === false) {
                     throw new Exception("Error al guardar la firma en el servidor.");
                 }
-        
+
                 // Insertar los datos en la base de datos
                 $condutaEticaData = [
                     'postulante_id' => $postulanteId,
@@ -314,7 +398,7 @@ class HomeController
                     'conduta_etica_valores' => $condutaEticaValores,
                     'firma' => $nombreFirma // Solo guardamos el nombre del archivo
                 ];
-        
+
                 if (!$this->model->insertCondutaEtica($condutaEticaData)) {
                     throw new Exception("Error al guardar la información de conducta ética.");
                 }
@@ -329,33 +413,47 @@ class HomeController
     //? Función para procesar y guardar un archivo
     private function procesarArchivo($archivo, $directorio, $nombreBase)
     {
+        // Si no se proporciona un archivo, retornar una cadena vacía
         if (!$archivo || empty($archivo['name'])) {
             return '';
         }
 
+        // Tipos de archivo permitidos (solo imágenes y PDF)
         $permitidos = ['image/jpeg', 'image/png', 'application/pdf'];
         $tipoArchivo = mime_content_type($archivo['tmp_name']);
 
+        // Validar el tipo de archivo
         if (!in_array($tipoArchivo, $permitidos)) {
-            throw new Exception("Formato de archivo no permitido");
+            throw new Exception("Formato de archivo no permitido. Solo se permiten archivos JPEG, PNG y PDF.");
         }
 
-        if ($archivo['size'] > 5 * 1024 * 1024) { // Máximo 5MB
-            throw new Exception("El archivo es demasiado grande");
+        // Validar el tamaño del archivo (máximo 5MB)
+        if ($archivo['size'] > 5 * 1024 * 1024) { // 5MB
+            throw new Exception("El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
         }
 
+        // Obtener la extensión del archivo
         $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
-        $nombreArchivo = $nombreBase . '.' . $extension;
+
+        // Generar un nombre único para el archivo
+        $nombreArchivo = $nombreBase . '_' . uniqid() . '.' . $extension;
+
+        // Asegurarse de que el directorio de destino exista
+        if (!is_dir($directorio)) {
+            if (!mkdir($directorio, 0777, true)) {
+                throw new Exception("No se pudo crear el directorio de destino.");
+            }
+        }
+
+        // Ruta completa del archivo de destino
         $rutaDestino = rtrim($directorio, '/') . '/' . $nombreArchivo;
 
-        if (!is_dir($directorio)) {
-            mkdir($directorio, 0777, true);
-        }
-
+        // Mover el archivo subido al directorio de destino
         if (!move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
-            throw new Exception("Error al subir el archivo");
+            throw new Exception("Error al mover el archivo subido. Verifique los permisos del directorio.");
         }
 
-        return $nombreArchivo; // Guardamos solo el nombre del archivo en la base de datos
+        // Retornar solo el nombre del archivo para almacenarlo en la base de datos
+        return $nombreArchivo;
     }
 }

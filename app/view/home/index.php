@@ -50,7 +50,7 @@
 
         <!-- archivo de identidad adjunto -->
         <div class="col-md-4">
-          <label class="form-label">Adjuntar Documento de Identidad:<span
+          <label class="form-label">Adjuntar Copia de Documento de Identidad:<span
               class="text-danger">*</span></label>
           <input type="file" class="form-control" name="pdfDocumentoIdentidad" id="pdfDocumentoIdentidad"
             accept="application/pdf" required>
@@ -1216,7 +1216,7 @@
         <div class="col-12">
           <!-- <label class="form-label">Carta de Presentación:<span class="text-danger">*</span></label> -->
           <textarea name="cartaPresentacion" id="descripcionContribucion" class="form-control"
-            rows="6"></textarea>
+            rows="6" required></textarea>
           <small id="contadorPalabras" class="text-muted">Maximo 400 palabras. Palabras actuales:
             0</small>
           <div id="mensajeError" class="text-danger mt-1" style="display: none;"><b>Nota:</b> Has excedido
@@ -1256,7 +1256,7 @@
       <button type="button" class="btn btn-primary mt-3 next"
         onclick="showPreviewInModal()">Previsualizar</button>
     </div>
-    <button type="submit" class="btn btn-success">Enviar Formulario</button>
+    <!-- <button type="submit" class="btn btn-success">Enviar Formulario</button> -->
   </form>
 </main>
 
@@ -1276,7 +1276,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         <button type="button" class="btn btn-info" onclick="downloadPDF()">Descargar PDF</button>
-        <!-- <button type="submit" class="btn btn-success" id="enviarFormulario" onclick="">Enviar Formulario</button> -->
+        <button type="submit" class="btn btn-success" id="btnEnviarFormulario">Enviar Formulario</button>
       </div>
     </div>
   </div>
