@@ -28,6 +28,7 @@ function mostrarAlerta(mensaje) {
     $('#alertModal').modal('show');
 }
 
+// Función para validar la sección 8
 async function showPreviewInModal() {
     if (!validateSection8()) {
         mostrarAlerta("Por favor, marcar todas las casillas y proporcionar una firma antes de continuar.");
@@ -42,6 +43,7 @@ async function showPreviewInModal() {
     modalInstance.show();
 }
 
+// Función para generar el contenido de la previsualización
 function generatePreviewContent() {
     const styleContent = `
         <style>
@@ -62,6 +64,7 @@ function generatePreviewContent() {
             .anexo-label { background-color: #007bff; color: white; padding: 2px 5px; border-radius: 3px; font-size: 0.9em; }
             .checkbox-label { display: block; margin: 5px 0; }
             .archivo-adjunto { color: #007bff; font-style: italic; }
+            .accion-celda { display: none; } /* Ocultar celdas de acción en la previsualización */
         </style>
     `;
 
@@ -109,6 +112,7 @@ function generatePreviewContent() {
     return content;
 }
 
+// Función para procesar las secciones y subsecciones
 function processSubsections(section, sectionId) {
     let content = '';
 
@@ -124,6 +128,7 @@ function processSubsections(section, sectionId) {
     return content;
 }
 
+/// Función para procesar cada subsección
 function processSubsection(subsection, sectionId) {
     let content = `<div class="subsection">`;
 
@@ -159,6 +164,7 @@ function processSubsection(subsection, sectionId) {
     return content;
 }
 
+/// Función para procesar los campos de entrada
 function processFields(fields, sectionId) {
     let content = '';
 
@@ -210,13 +216,14 @@ function processFields(fields, sectionId) {
     return content;
 }
 
+// Función para procesar las tablas
 function processTable(table) {
     const clonedTable = table.cloneNode(true);
 
     const headers = clonedTable.querySelectorAll('th');
     let actionIndex = -1;
     headers.forEach((header, index) => {
-        if (header.textContent.includes("Acción")) {
+        if (header.textContent.trim().includes("Acción")) {
             actionIndex = index;
         }
     });
@@ -226,7 +233,7 @@ function processTable(table) {
         rows.forEach(row => {
             const actionCell = row.children[actionIndex];
             if (actionCell) {
-                actionCell.remove();
+                actionCell.classList.add("accion-celda"); // Agregar clase específica
             }
         });
     }
@@ -244,7 +251,7 @@ function processTable(table) {
     return `<table>${clonedTable.innerHTML}</table>`;
 }
 
-
+// Función para leer un archivo como ArrayBuffer
 async function readFileAsArrayBuffer(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -254,6 +261,347 @@ async function readFileAsArrayBuffer(file) {
     });
 }
 
+
+let tempPDFIdentidad = null;
+
+document.getElementById('pdfDocumentoIdentidad').addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+        tempPDFIdentidad = this.files[0];
+        document.getElementById('hiddenPdfIdentidad').value = this.files[0].name;
+        
+        //depuración
+        // alert(tempPDFIdentidad.name);
+        // console.log('PDF de identidad almacenado:', this.files[0].name);
+    }
+});
+
+// Función para descargar el PDF
+async function downloadPDF() {
+    const { PDFDocument } = PDFLib;
+    const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+    const previewContent = document.getElementById('previewModalBody');
+
+    let margin = 15; // Margen general
+    let lineHeight = 10;
+    let currentY = margin;
+    const pageWidth = pdf.internal.pageSize.getWidth() - margin * 2;
+
+    const logoImg = new Image();
+    logoImg.src = url + 'assets/ICACIT_2025.jpg';
+
+    logoImg.onload = async function () {
+        const logoHeight = (logoImg.height * 25) / logoImg.width;
+
+        const addHeader = () => {
+            pdf.addImage(logoImg, 'PNG', margin, margin, 25, logoHeight);
+            // pdf.setFontSize(10);
+            // pdf.setTextColor(100); // Color gris para el texto secundario
+            // pdf.text(`Fecha aplicación: ${new Date().toLocaleDateString()}`, pageWidth + margin, margin + logoHeight / 2, { align: 'right' });
+        };
+
+        // addHeader();
+
+        /*
+        // Agregar el título general
+        pdf.setFontSize(36);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(0, 0, 0);
+        const titleText = 'Formulario de Inscripción\nICACIT 2025';
+        const titleX = pdf.internal.pageSize.getWidth() / 2;
+        const titleY = pdf.internal.pageSize.getHeight() / 2;
+        pdf.text(titleText, titleX, titleY, { align: 'center' });
+        currentY = titleY + 25;
+        */
+
+        // Agregar una nueva página para el contenido
+        // pdf.addPage();
+        addHeader();
+        currentY = margin + logoHeight + 10;
+
+        // Agregar el título general y el subtítulo
+        pdf.setFontSize(24);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(0, 0, 0);
+        const titleText2 = 'Perfil De Candidato Para Evaluador ICACIT';
+        const titleX2 = pdf.internal.pageSize.getWidth() / 2;
+        const titleY2 = currentY + 15; // Espacio después del encabezado
+        pdf.text(titleText2, titleX2, titleY2, { align: 'center' });
+
+        // Agregar el subtítulo
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'italic');
+        var contador = $('#contador').val();
+        // alert(contador);
+        // //console.log(contador);
+        const subtitleText = 'PFEV2025-' + contador; 
+        const subtitleY = titleY2 + 10; 
+        pdf.text(subtitleText, titleX2, subtitleY, { align: 'center' });
+
+        // Agregar fecha de registro
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica','italic');
+        const fechaRegistro = new Date().toLocaleDateString();
+        const fechaY = subtitleY + 5; // Espacio despues del subtítulo
+        pdf.text(`Fecha de Registro: ${fechaRegistro}`, titleX2, fechaY, { align: 'center' });
+
+        currentY = subtitleY + 20;
+
+        const addText = (text, fontSize = 12, isBold = false, align = 'left', colWidth = pageWidth, color = [0, 0, 0], justify = true) => {
+            if (currentY + lineHeight > pdf.internal.pageSize.getHeight() - margin) {
+                pdf.addPage();
+                addHeader();
+                currentY = margin + logoHeight + 10;
+            }
+            pdf.setFontSize(fontSize);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(...color);
+
+            const textLines = pdf.splitTextToSize(text, colWidth);
+            if (justify) {
+                // Justificar el texto
+                textLines.forEach((line, index) => {
+                    pdf.text(line, margin, currentY + (index * lineHeight), { align: 'justify' });
+                });
+                currentY += lineHeight * textLines.length;
+            } else {
+                pdf.text(textLines, margin, currentY, { align });
+                currentY += lineHeight * textLines.length;
+            }
+        };
+
+        const addImage = (imgSrc, width, height, align = 'center') => {
+            if (currentY + height + lineHeight > pdf.internal.pageSize.getHeight() - margin) {
+                pdf.addPage();
+                addHeader();
+                currentY = margin + logoHeight + 10;
+            }
+            const x = align === 'center' ? (pageWidth - width) / 2 : margin;
+            pdf.addImage(imgSrc, 'PNG', x, currentY, width, height);
+            currentY += height + lineHeight;
+        };
+
+        const addTable = (table) => {
+            const rows = table.querySelectorAll('tr');
+            const data = [];
+            let actionIndex = -1;
+        
+            // Encontrar el índice de la columna de acción
+            const headers = table.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                if (header.textContent.trim().includes("Acción")) {
+                    actionIndex = index;
+                }
+            });
+        
+            rows.forEach(row => {
+                const rowData = [];
+                const cells = row.querySelectorAll('th, td');
+                cells.forEach((cell, index) => {
+                    if (index !== actionIndex) { // Omitir la columna de acción
+                        if (cell.querySelector('.pdf-icon')) {
+                            rowData.push("Adjunto");
+                        } else {
+                            rowData.push(cell.textContent.trim());
+                        }
+                    }
+                });
+                data.push(rowData);
+            });
+        
+            pdf.autoTable({
+                startY: currentY - 10,
+                head: [data[0]],
+                body: data.slice(1),
+                margin: { left: margin },
+                headStyles: { fillColor: [44, 62, 80] },
+                alternateRowStyles: { fillColor: [245, 245, 245] },
+            });
+        
+            currentY = pdf.autoTable.previous.finalY + lineHeight;
+        };
+
+        // Agregar el contenido de la previsualización
+        previewContent.querySelectorAll('h4, h5, p, img, table').forEach(element => {
+            if (element.tagName === 'H4') {
+                currentY += 8; // Reducir espacio antes del título
+                addText(element.textContent, 18, true, 'left', pageWidth, [0, 51, 102]);
+            } else if (element.tagName === 'H5') {
+                addText(element.textContent, 16, true, 'left', pageWidth, [0, 102, 153]);
+                currentY += 5; // Reducir espacio después del subtítulo
+            } else if (element.tagName === 'P') {
+                const isSection7 = element.closest('.form-section')?.id === 'section7';
+                addText(element.textContent.replace(/<br\s*\/?>/gi, '\n'), 12, false, 'left', pageWidth, [0, 0, 0], isSection7);   
+                if (isSection7) {
+                    currentY -= 20; // Reducir espacio después de la sección 7
+                }
+            } else if (element.tagName === 'IMG') {
+                const imgSrc = element.src;
+                let imgWidth, imgHeight;
+        
+                if (element.classList.contains('profile-picture')) {
+                    imgWidth = 30; // Ajustar el tamaño de la foto de perfil
+                    imgHeight = (element.naturalHeight * imgWidth) / element.naturalWidth;
+                } else if (element.classList.contains('signature')) {
+                    imgWidth = 100; // Tamaño más grande para la firma
+                    imgHeight = (element.naturalHeight * imgWidth) / element.naturalWidth;
+                } else {
+                    imgWidth = 60; // Tamaño más grande para otras imágenes
+                    imgHeight = (element.naturalHeight * imgWidth) / element.naturalWidth;
+                }
+        
+                addImage(imgSrc, imgWidth, imgHeight);
+            } else if (element.tagName === 'TABLE') {
+                addTable(element);
+            }
+        });
+
+        // Guardar el PDF generado por jsPDF como un ArrayBuffer
+        const jsPDFBuffer = pdf.output('arraybuffer');
+        const finalPdf = await PDFDocument.create();
+        const jsPDFDoc = await PDFDocument.load(jsPDFBuffer);
+        const jsPDFPages = await finalPdf.copyPages(jsPDFDoc, jsPDFDoc.getPageIndices());
+        jsPDFPages.forEach(page => finalPdf.addPage(page));
+
+    
+        //? Funciónes para agregar un PDF adjunto al documento final
+        // Agregar un PDF adjunto de identidad
+        if (tempPDFIdentidad) {
+            const arrayBuffer = await readFileAsArrayBuffer(tempPDFIdentidad);
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+
+            // agregar pagina con titulo
+            const tituloPagina = await finalPdf.addPage();
+            const helveticaBoldFont = await finalPdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
+            const fontSize = 28;
+            const pageWidth = tituloPagina.getWidth();
+            const pageHeight = tituloPagina.getHeight();
+            const lines = 'Anexo: Documento de Identidad'.split('\n');
+            const lineHeight = fontSize * 1.2;
+            const totalTextHeight = lineHeight * lines.length;
+            const yStart = (pageHeight + totalTextHeight) / 2 - lineHeight;
+
+            lines.forEach((line, index) => {
+                const textWidth = helveticaBoldFont.widthOfTextAtSize(line, fontSize);
+                const x = (pageWidth - textWidth) / 2;
+                const y = yStart - (index * lineHeight);
+
+                tituloPagina.drawText(line, {
+                    x: x,
+                    y: y,
+                    size: fontSize,
+                    font: helveticaBoldFont,
+                });
+            });
+    
+            const pages = await finalPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+            pages.forEach(page => finalPdf.addPage(page));
+        }
+
+        // Agregar los PDF adjuntos en el orden de las secciones
+        // await addPDF(document.getElementById('pdfDocumentoIdentidad'), 'Anexo: Documento de Identidad');
+
+
+        // Agregar los PDF de las tablas de formacion academica
+        let seccionesUnicasFormacion = [...new Set(anexosTablasFormacionAcademica.map(anexo => anexo.seccion))]; // Obtener secciones únicas
+        for (let seccion of seccionesUnicasFormacion) {
+            // Agregar un título general para la sección
+            const titleAnexo = await finalPdf.addPage();
+            const helveticaBoldFont = await finalPdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
+            const titleTextFormacion = 'Anexo: Evidencias de formación\nacadémica';
+            const lines = titleTextFormacion.split('\n');
+            const fontSize = 28;
+            const lineHeight = fontSize * 1.2; // Ajustar el espaciado entre líneas
+            const pageWidth = titleAnexo.getWidth();
+            const pageHeight = titleAnexo.getHeight();
+            const totalTextHeight = lineHeight * lines.length;
+            const yStart = (pageHeight + totalTextHeight) / 2 - lineHeight;
+
+            lines.forEach((line, index) => {
+                const textWidth = helveticaBoldFont.widthOfTextAtSize(line, fontSize);
+                const x = (pageWidth - textWidth) / 2;
+                const y = yStart - (index * lineHeight);
+
+                titleAnexo.drawText(line, {
+                    x: x,
+                    y: y,
+                    size: fontSize,
+                    font: helveticaBoldFont,
+                });
+            });
+
+            // Agregar los PDFs de la sección actual
+            const anexosSeccion = anexosTablasFormacionAcademica.filter(anexo => anexo.seccion === seccion);
+            for (let anexo of anexosSeccion) {
+                const arrayBuffer = await readFileAsArrayBuffer(anexo.file);
+                const pdfDoc = await PDFDocument.load(arrayBuffer);
+                const pages = await finalPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                pages.forEach(page => finalPdf.addPage(page));
+            }
+        }
+
+        // Agregar los PDF de las tablas de experiencia laboral y docente
+        let seccionesUnicasExperiencia = [...new Set([
+            ...anexosTablasExperienciaLaboral.map(anexo => anexo.seccion),
+            ...anexosTablasExperienciaDocente.map(anexo => anexo.seccion)
+        ])]; // Obtener secciones únicas de ambas tablas
+
+        for (let seccion of seccionesUnicasExperiencia) {
+            // Agregar un título general para la sección
+            const titleAnexo = await finalPdf.addPage();
+            const helveticaBoldFont = await finalPdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
+            const titleText = 'Anexo: Evidencias de 10 años de\nexperiencia profesional';
+            const lines = titleText.split('\n');
+            const fontSize = 28;
+            const lineHeight = fontSize * 1.2; // Ajustar el espaciado entre líneas
+            const pageWidth = titleAnexo.getWidth();
+            const pageHeight = titleAnexo.getHeight();
+            const totalTextHeight = lineHeight * lines.length;
+            const yStart = (pageHeight + totalTextHeight) / 2 - lineHeight;
+
+            lines.forEach((line, index) => {
+                const textWidth = helveticaBoldFont.widthOfTextAtSize(line, fontSize);
+                const x = (pageWidth - textWidth) / 2;
+                const y = yStart - (index * lineHeight);
+
+                titleAnexo.drawText(line, {
+                    x: x,
+                    y: y,
+                    size: fontSize,
+                    font: helveticaBoldFont,
+                });
+            });
+
+            // Agregar los PDFs de experiencia laboral de la sección actual
+            const anexosSeccionLaboral = anexosTablasExperienciaLaboral.filter(anexo => anexo.seccion === seccion);
+            for (let anexo of anexosSeccionLaboral) {
+                const arrayBuffer = await readFileAsArrayBuffer(anexo.file);
+                const pdfDoc = await PDFDocument.load(arrayBuffer);
+                const pages = await finalPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                pages.forEach(page => finalPdf.addPage(page));
+            }
+
+            // Agregar los PDFs de experiencia docente de la sección actual
+            const anexosSeccionDocente = anexosTablasExperienciaDocente.filter(anexo => anexo.seccion === seccion);
+            for (let anexo of anexosSeccionDocente) {
+                const arrayBuffer = await readFileAsArrayBuffer(anexo.file);
+                const pdfDoc = await PDFDocument.load(arrayBuffer);
+                const pages = await finalPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                pages.forEach(page => finalPdf.addPage(page));
+            }
+        }
+
+        // Guardar el PDF generado por jsPDF
+        const finalPdfBytes = await finalPdf.save();
+        const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Formulario_Inscripcion_ICACIT_2025.pdf';
+        link.click();
+    };
+}
+
+
+/*
 async function downloadPDF() {
     const { PDFDocument } = PDFLib;
     const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
@@ -279,14 +627,14 @@ async function downloadPDF() {
 
         addHeader();
 
-        pdf.setFontSize(36); // Tamaño más grande para el título principal
+        pdf.setFontSize(36);
         pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(0, 0, 0); // Color negro para el título (RGB)
-        const titleText = 'Formulario de Inscripción\nICACIT 2025'; // Título en dos líneas
+        pdf.setTextColor(0, 0, 0);
+        const titleText = 'Formulario de Inscripción\nICACIT 2025';
         const titleX = pdf.internal.pageSize.getWidth() / 2;
         const titleY = pdf.internal.pageSize.getHeight() / 2;
-        pdf.text(titleText, titleX, titleY, { align: 'center' }); // Centrar el título en la página
-        currentY = titleY + 25; // Ajustar el espacio después del título
+        pdf.text(titleText, titleX, titleY, { align: 'center' });
+        currentY = titleY + 25;
 
         // Agregar una nueva página para el contenido
         pdf.addPage();
@@ -360,13 +708,13 @@ async function downloadPDF() {
         previewContent.querySelectorAll('h4, h5, p, img, table').forEach(element => {
             if (element.tagName === 'H4') {
                 currentY += 8; // Reducir espacio antes del título
-                addText(element.textContent, 18, true, 'left', pageWidth, [0, 51, 102]); // Color azul oscuro para títulos
+                addText(element.textContent, 18, true, 'left', pageWidth, [0, 51, 102]);
             } else if (element.tagName === 'H5') {
-                addText(element.textContent, 16, true, 'left', pageWidth, [0, 102, 153]); // Color azul claro para subtítulos
+                addText(element.textContent, 16, true, 'left', pageWidth, [0, 102, 153]);
                 currentY += 5; // Reducir espacio después del subtítulo
             } else if (element.tagName === 'P') {
-                const isSection7 = element.closest('.form-section')?.id === 'section7'; // Verificar si es la sección 7
-                addText(element.textContent.replace(/<br\s*\/?>/gi, '\n'), 12, false, 'left', pageWidth, [0, 0, 0], isSection7); // Justificar solo la sección 7
+                const isSection7 = element.closest('.form-section')?.id === 'section7';
+                addText(element.textContent.replace(/<br\s*\/?>/gi, '\n'), 12, false, 'left', pageWidth, [0, 0, 0], isSection7);   
                 if (isSection7) {
                     currentY -= 20; // Reducir espacio después de la sección 7
                 }
@@ -541,3 +889,4 @@ async function downloadPDF() {
         link.click();
     };
 }
+*/

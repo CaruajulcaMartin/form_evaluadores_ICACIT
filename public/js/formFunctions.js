@@ -104,7 +104,7 @@ function crearFila(tablaId, valores, incluirPDF = false) {
         inputOculto.value = incluirPDF.name; // Almacenar el nombre del archivo
         fila.appendChild(inputOculto);
 
-        console.log(`PDF agregado al input oculto en la fila de la tabla ${tablaId}`);
+        // console.log(`PDF agregado al input oculto en la fila de la tabla ${tablaId}`);
 
         // Agregar el PDF al arreglo de anexos correspondiente
         if (tablaId === "tablaFormacion") {
@@ -114,11 +114,11 @@ function crearFila(tablaId, valores, incluirPDF = false) {
         } else if (tablaId === "tablaExperienciaDocente") {
             anexosTablasExperienciaDocente.push({ file: incluirPDF });
         }
-        
     }
 
     // Agregar la celda de acción (botón para eliminar la fila)
     let celdaAccion = document.createElement("td");
+    celdaAccion.classList.add("accion-celda"); // Agregar clase específica
     celdaAccion.innerHTML = `<button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fa-solid fa-trash"></i></button>`;
     fila.appendChild(celdaAccion);
 
@@ -222,6 +222,7 @@ function agregarCursosAmbitoProfesional(){
         document.getElementById("anoCertificadoCampoProfesional"),
         document.getElementById("institucionCampoProfesional"),
         document.getElementById("cursoSeminarioCampoProfesional"),
+        document.getElementById("tipoCursoSeminarioCampoProfesional"),
         document.getElementById("duracionCampoProfesional"),
     ];
 
@@ -250,6 +251,7 @@ function agregarCursosAmbitoAcademico(){
         document.getElementById("anoCertificadoAmbitoAcademico"),
         document.getElementById("institucionAmbitoAcademico"),
         document.getElementById("cursoSeminarioAmbitoAcademico"),
+        document.getElementById("tipoCursoSeminarioAmbitoAcademico"),
         document.getElementById("duracionAmbitoAcademico"),
     ];
 
@@ -277,6 +279,7 @@ function agregarCursos() {
     let campos = [
         document.getElementById("anoCertificado"),
         document.getElementById("institucion"),
+        document.getElementById("tipoCursoSeminario"),
         document.getElementById("cursoSeminario"),
         document.getElementById("duracion")
     ];
@@ -328,17 +331,17 @@ function agregarExperienciaDocente() {
         document.getElementById("ciudadDocente"),
         document.getElementById("programaProfesional"),
         document.getElementById("cursosImpartidos"),
-        document.getElementById("funcionesPrincipales"), // funciona correctamente en pestaña incognita
         document.getElementById("fechaInicioDocente"),
         document.getElementById("fechaRetiroDocente")
     ];
 
-    // let funcionesPrincipales = document.getElementById("funcionesPrincipales");
-
+    let funcionesPrincipales = document.getElementById("funcionesPrincipales"); // Campo no obligatorio
     let pdfInput = document.getElementById("pdfExperienciaDocente");
 
+    // Validar los campos obligatorios y el PDF
     if (!validarCampos(campos) || !validarPDF(pdfInput)) return;
 
+    // Validar que el tiempo de experiencia sea de al menos un año
     let fechaInicio = new Date(campos[5].value);
     let fechaFin = new Date(campos[6].value);
     let tiempo = fechaFin.getFullYear() - fechaInicio.getFullYear();
@@ -348,9 +351,17 @@ function agregarExperienciaDocente() {
         return;
     }
 
+    // Mapear los valores de los campos obligatorios
     let valores = campos.map(campo => campo.value);
+
+    // Agregar el valor de "funciones principales" (puede ser vacío)
+    valores.splice(5, 0, funcionesPrincipales.value || ""); // Insertar en la posición correspondiente
+
+    // Crear la fila en la tabla
     crearFila("tablaExperienciaDocente", valores, pdfInput.files[0]);
-    limpiarCampos([...campos, pdfInput]);
+
+    // Limpiar los campos
+    limpiarCampos([...campos, funcionesPrincipales, pdfInput]);
 }
 
 // Funcion para agregar experiencia comite

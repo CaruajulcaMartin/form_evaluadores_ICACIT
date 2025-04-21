@@ -55,6 +55,7 @@ function recolectarDatosTablasExperiencia(formData) {
             const paisEmpresaExperienciaLaboral = row.find("td:eq(4)").text();
             const ciudadExperienciaLaboral = row.find("td:eq(5)").text();
 
+            /*
             // Depuración
             console.log(`Institucion: ${institucionEmpresaExperienciaLaboral}`);
             console.log(`Cargo: ${cargoDesempeñadoExperienciaLaboral}`);
@@ -62,7 +63,8 @@ function recolectarDatosTablasExperiencia(formData) {
             console.log(`Fecha retiro: ${fechaRetiroExperienciaLaboral}`);
             console.log(`Pais: ${paisEmpresaExperienciaLaboral}`);
             console.log(`Ciudad: ${ciudadExperienciaLaboral}`);
-
+            */
+            
             // Agregar los datos recolectados al FormData
             formData.append(`experienciaLaboral[${index}][institucionEmpresaExperienciaLaboral]`, institucionEmpresaExperienciaLaboral);
             formData.append(`experienciaLaboral[${index}][cargoDesempeñadoExperienciaLaboral]`, cargoDesempeñadoExperienciaLaboral);
@@ -93,6 +95,7 @@ function recolectarDatosTablasExperiencia(formData) {
                 console.log("  pdf: No se encontró el input oculto en la fila");
             }
 
+            /*
             // Depuración adicional
             console.log("  --- Depuración adicional ---");
             console.log("  Arreglo de anexos:", anexosTablasExperienciaLaboral);
@@ -100,6 +103,7 @@ function recolectarDatosTablasExperiencia(formData) {
             console.log("  Valor del input oculto:", inputOculto.val());
             console.log("  Estructura de la fila:", row.html());
             console.log("  ---------------------------");
+            */
         } else {
             console.log(`Fila ${index + 1} ignorada (no contiene datos)`);
         }
@@ -122,15 +126,17 @@ function recolectarDatosTablasExperiencia(formData) {
             const fechaInicioExperienciaDocente = row.find("td:eq(6)").text();
             const fechaRetiroExperienciaDocente = row.find("td:eq(7)").text();
 
+            /*
             // Depuración
-            // console.log(`InstitucionExperienciaDocente: ${institucionExperienciaDocente}`);
-            // console.log(`PaisExperienciaDocente: ${paisExperienciaDocente}`);
-            // console.log(`CiudadExperienciaDocente: ${ciudadExperienciaDocente}`);
-            // console.log(`ProgramaProfesionalExperienciaDocente: ${programaProfesionalExperienciaDocente}`);
-            // console.log(`CursoCapacitacionImpartidoExperienciaDocente: ${cursoCapacitacionImpartidoExperienciaDocente}`);
-            // console.log(`FuncionesPrincipales: ${funcionesPrincipales}`);
-            // console.log(`FechaInicioExperienciaDocente: ${fechaInicioExperienciaDocente}`);
-            // console.log(`FechaRetiroExperienciaDocente: ${fechaRetiroExperienciaDocente}`);
+            console.log(`InstitucionExperienciaDocente: ${institucionExperienciaDocente}`);
+            console.log(`PaisExperienciaDocente: ${paisExperienciaDocente}`);
+            console.log(`CiudadExperienciaDocente: ${ciudadExperienciaDocente}`);
+            console.log(`ProgramaProfesionalExperienciaDocente: ${programaProfesionalExperienciaDocente}`);
+            console.log(`CursoCapacitacionImpartidoExperienciaDocente: ${cursoCapacitacionImpartidoExperienciaDocente}`);
+            console.log(`FuncionesPrincipales: ${funcionesPrincipales}`);
+            console.log(`FechaInicioExperienciaDocente: ${fechaInicioExperienciaDocente}`);
+            console.log(`FechaRetiroExperienciaDocente: ${fechaRetiroExperienciaDocente}`);
+            */
 
             // Agregar los datos recolectados al FormData
             formData.append(`experienciaDocente[${index}][institucionExperienciaDocente]`, institucionExperienciaDocente);

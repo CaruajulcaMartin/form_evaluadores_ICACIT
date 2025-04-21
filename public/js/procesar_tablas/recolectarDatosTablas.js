@@ -54,13 +54,15 @@ function recolectarDatosTablas(formData) {
             const institucionEducativa = row.find("td:eq(3)").text();
             const nombreGrado = row.find("td:eq(4)").text();
     
+            /*
             // Depuración
-            // console.log(`  tipoFormacion: ${tipoFormacion}`);
-            // console.log(`  paisFormacion: ${paisFormacion}`);
-            // console.log(`  anoGraduacion: ${anoGraduacion}`);
-            // console.log(`  institucionEducativa: ${institucionEducativa}`);
-            // console.log(`  nombreGrado: ${nombreGrado}`);
-    
+            console.log(`  tipoFormacion: ${tipoFormacion}`);
+            console.log(`  paisFormacion: ${paisFormacion}`);
+            console.log(`  anoGraduacion: ${anoGraduacion}`);
+            console.log(`  institucionEducativa: ${institucionEducativa}`);
+            console.log(`  nombreGrado: ${nombreGrado}`);
+            */
+
             // Agregar datos al FormData
             formData.append(`formacionAcademica[${index}][tipoFormacion]`, tipoFormacion);
             formData.append(`formacionAcademica[${index}][paisFormacion]`, paisFormacion);
@@ -103,11 +105,12 @@ function recolectarDatosTablas(formData) {
     });
 
 
+    /*
     // Depuración: Imprimir el contenido de FormData
     for (let [key, value] of formData.entries()) {
         console.log(key, value);
     }
-
+    */
 
     // **Recolectar datos de la tabla dinámica de idiomas
     $("#tablaIdiomas tr").each(function (index) {
@@ -127,7 +130,8 @@ function recolectarDatosTablas(formData) {
             formData.append(`SeminariosCampoProfesional[${index}][anoCertificadoCampoProfesional]`, row.find("td:eq(0)").text());
             formData.append(`SeminariosCampoProfesional[${index}][institucionCampoProfesional]`, row.find("td:eq(1)").text());
             formData.append(`SeminariosCampoProfesional[${index}][cursoSeminarioCampoProfesional]`, row.find("td:eq(2)").text());
-            formData.append(`SeminariosCampoProfesional[${index}][duracionCampoProfesional]`, row.find("td:eq(3)").text());
+            formData.append(`SeminariosCampoProfesional[${index}][tipoCursoSeminarioCampoProfesional]`, row.find("td:eq(3)").text());
+            formData.append(`SeminariosCampoProfesional[${index}][duracionCampoProfesional]`, row.find("td:eq(4)").text());
         }
     });
 
@@ -139,7 +143,8 @@ function recolectarDatosTablas(formData) {
             formData.append(`SeminariosAmbitoAcademico[${index}][anoCertificadoAmbitoAcademico]`, row.find("td:eq(0)").text());
             formData.append(`SeminariosAmbitoAcademico[${index}][institucionAmbitoAcademico]`, row.find("td:eq(1)").text());
             formData.append(`SeminariosAmbitoAcademico[${index}][cursoSeminarioAmbitoAcademico]`, row.find("td:eq(2)").text());
-            formData.append(`SeminariosAmbitoAcademico[${index}][duracionAmbitoAcademico]`, row.find("td:eq(3)").text());
+            formData.append(`SeminariosAmbitoAcademico[${index}][tipoCursoSeminarioAmbitoAcademico]`, row.find("td:eq(3)").text());
+            formData.append(`SeminariosAmbitoAcademico[${index}][duracionAmbitoAcademico]`, row.find("td:eq(4)").text());
         }
     });
 
@@ -150,7 +155,8 @@ function recolectarDatosTablas(formData) {
             formData.append(`SeminariosAmbitoEvaluacion[${index}][anoCertificadoAmbitoEvaluacion]`, row.find("td:eq(0)").text());
             formData.append(`SeminariosAmbitoEvaluacion[${index}][institucionAmbitoEvaluacion]`, row.find("td:eq(1)").text());
             formData.append(`SeminariosAmbitoEvaluacion[${index}][cursoSeminarioAmbitoEvaluacion]`, row.find("td:eq(2)").text());
-            formData.append(`SeminariosAmbitoEvaluacion[${index}][duracionAmbitoEvaluacion]`, row.find("td:eq(3)").text());
+            formData.append(`SeminariosAmbitoEvaluacion[${index}][tipoCursoSeminarioAmbitoEvaluacion]`, row.find("td:eq(3)").text());
+            formData.append(`SeminariosAmbitoEvaluacion[${index}][duracionAmbitoEvaluacion]`, row.find("td:eq(4)").text());
         }
     });
 }

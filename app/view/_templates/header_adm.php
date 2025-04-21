@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>ICACIT | Formulario de Inscripción - Evaluador</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" href="<?php echo URL; ?>images/favicon.jpg">
+  <link rel="icon" type="image/png" href="<?php echo URL; ?>assets/logo.png">
 
   <!-- Librería CSS -->
   <link rel="stylesheet" href="<?php echo URL; ?>css/style.css">
@@ -50,4 +50,4 @@
   </style>
 </head>
 
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini" style="background-color: #F8F8FF;">

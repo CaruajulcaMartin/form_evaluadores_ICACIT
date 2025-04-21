@@ -1,6 +1,7 @@
 let currentSection = 0;
 const sections = document.querySelectorAll(".form-section");
 const progressBar = document.getElementById("progressBar");
+const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
 
 // Mostrar la sección actual
 function showSection(index) {
@@ -49,20 +50,18 @@ function updateProgress(index) {
 
 // Validar la sección actual
 function validateSection(section) {
-    const sectionName = section.querySelector("h2")?.textContent || "Sección desconocida";
-    
-    return validateRequiredFields(section, sectionName) && validateTables(section);
+    return validateRequiredFields(section) && validateTables(section);
 }
 
-// Validar campos requeridos
-function validateRequiredFields(section, sectionName) {
+// Validar campos requeridos (solo marca en rojo, sin modal)
+function validateRequiredFields(section) {
     let isValid = true;
     const requiredInputs = section.querySelectorAll('input[required], select[required], textarea[required]');
 
     requiredInputs.forEach(input => {
         if (!input.value.trim()) {
             isValid = false;
-            showError(input, `La "${sectionName}", tiene campos requeridos.`);
+            showError(input);
         } else {
             hideError(input);
         }
@@ -71,40 +70,44 @@ function validateRequiredFields(section, sectionName) {
     return isValid;
 }
 
-// Validar solo las tablas obligatorias
+// Validar solo las tablas obligatorias (muestra modal solo para tablas)
 function validateTables(section) {
     let isValid = true;
-
-    const requiredTables = section.querySelectorAll('table.required'); // Solo valida tablas con la clase 'required'
+    const requiredTables = section.querySelectorAll('table.required');
 
     requiredTables.forEach(table => {
         if (table.querySelectorAll('tbody tr').length === 0) {
             isValid = false;
-            alert(`Debe agregar al menos un registro en la tabla: "${table.previousElementSibling.textContent.trim()}".`);
+            const tableTitle = table.dataset.tableName || 
+                             table.previousElementSibling?.textContent?.trim() || 
+                             'Tabla requerida';
+            showTableAlert(tableTitle);
         }
     });
 
     return isValid;
 }
 
-// Mostrar mensaje de error
-function showError(input, message) {
-    let errorDiv = input.parentNode.querySelector('.invalid-feedback');
-    if (!errorDiv) {
-        errorDiv = document.createElement('div');
-        errorDiv.className = 'invalid-feedback';
-        input.parentNode.appendChild(errorDiv);
-    }
-    errorDiv.textContent = message;
+// Mostrar error en campo (solo borde rojo)
+function showError(input) {
     input.classList.add('is-invalid');
+    // Enfocar el primer campo con error
+    if (!document.querySelector('.is-invalid:focus')) {
+        input.focus();
+    }
 }
 
-// Ocultar mensaje de error
+// Ocultar error en campo
 function hideError(input) {
-    const errorDiv = input.parentNode.querySelector('.invalid-feedback');
-    if (errorDiv) errorDiv.remove();
     input.classList.remove('is-invalid');
 }
 
+// Mostrar alerta para tablas requeridas (usa modal)
+function showTableAlert(tableTitle) {
+    document.getElementById('alertModalLabel').textContent = 'Tabla requerida';
+    document.getElementById('alertModalBody').textContent = `Debe agregar al menos un registro en la tabla: "${tableTitle}"`;
+    alertModal.show();
+}
+
 // Inicializar la primera sección visible
-//showSection(currentSection);
+showSection(currentSection);

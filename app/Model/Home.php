@@ -8,6 +8,17 @@ use Exception;
 
 class Home extends Model
 {
+    public function contador($numero_identidad)
+    {
+        // $sql = "SELECT COUNT(*) + 1 as contador FROM `postulante`;";
+        $sql = "SELECT id  FROM postulante where numero_identidad = :numero_identidad;";
+        $query = $this->db->prepare($sql);
+        $parameters = array(':numero_identidad' => $numero_identidad);
+        $query->execute($parameters);
+        // return $query->fetch()->id;
+        return ($query->rowcount() ? $query->fetch() : false);
+    }
+
     // *Función para insertar información de la sección 1 y 2 (carta de presentacion)
     public function insertPersonalInfo($data)
     {
@@ -91,7 +102,7 @@ class Home extends Model
             $query3 = $this->db->prepare($sql3);
             $query3->execute([
                 ':postulante_id' => $postulanteId,
-                ':carta_presentacion' => $data['cartaPresentacion'] //! no esta registrando correctamente en la base de datos en el index deve estar REQUIERDO
+                ':carta_presentacion' => $data['cartaPresentacion']
             ]);
 
             // Confirmar la transacción
@@ -177,10 +188,10 @@ class Home extends Model
             // Query para insertar en la tabla cursosseminarios
             $sql = "INSERT INTO cursosseminarioscampoprofesional (
             postulante_id, ano, institucion, nombre_curso_seminario, 
-            duracion
+            duracion, tipo_seminario
         ) VALUES (
             :postulante_id, :ano, :institucion, :nombre_curso_seminario, 
-            :duracion
+            :duracion, :tipo_seminario
         )";
 
             // Preparar la consulta con los datos proporcionados
@@ -190,6 +201,7 @@ class Home extends Model
                 ':ano' => $data['ano_curso_seminario'],
                 ':institucion' => $data['institucion_curso_seminario'],
                 ':nombre_curso_seminario' => $data['nombre_curso_seminario'],
+                ':tipo_seminario' => $data['tipo_seminario'],
                 ':duracion' => $data['duracion_curso_seminario']
             ]);
 
@@ -208,10 +220,10 @@ class Home extends Model
             // Query para insertar en la tabla cursosseminarios
             $sql = "INSERT INTO cursosseminariosambitoacademico (
             postulante_id, ano, institucion, nombre_curso_seminario, 
-            duracion
+            duracion, tipo_seminario
         ) VALUES (
             :postulante_id, :ano, :institucion, :nombre_curso_seminario, 
-            :duracion
+            :duracion, :tipo_seminario
         )";
 
             // Preparar la consulta con los datos proporcionados
@@ -221,6 +233,7 @@ class Home extends Model
                 ':ano' => $data['ano_curso_ambito_academico'],
                 ':institucion' => $data['institucion_curso_ambito_academico'],
                 ':nombre_curso_seminario' => $data['nombre_curso_ambito_academico'],
+                ':tipo_seminario' => $data['tipo_seminario'],
                 ':duracion' => $data['duracion_curso_ambito_academico']
             ]);
 
@@ -239,10 +252,10 @@ class Home extends Model
             // Query para insertar en la tabla cursosseminarios
             $sql = "INSERT INTO cursosseminariosambitoevaluacion (
             postulante_id, ano, institucion, nombre_curso_seminario, 
-            duracion
+            duracion, tipo_seminario
         ) VALUES (
             :postulante_id, :ano, :institucion, :nombre_curso_seminario, 
-            :duracion
+            :duracion, :tipo_seminario
         )";
 
             // Preparar la consulta con los datos proporcionados
@@ -252,6 +265,7 @@ class Home extends Model
                 ':ano' => $data['ano_curso_ambito_evaluacion'],
                 ':institucion' => $data['institucion_curso_ambito_evaluacion'],
                 ':nombre_curso_seminario' => $data['nombre_curso_ambito_evaluacion'],
+                ':tipo_seminario' => $data['tipo_seminario'],
                 ':duracion' => $data['duracion_curso_ambito_evaluacion']
             ]);
 
@@ -501,5 +515,4 @@ class Home extends Model
             throw new Exception("Error al insertar la experiencia valores eticos: " . $e->getMessage());
         }
     }
-
 }

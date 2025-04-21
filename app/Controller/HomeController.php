@@ -16,6 +16,7 @@ class HomeController
 
     public function index()
     {
+
         require APP . 'view/_templates/header_adm.php';
         require APP . 'view/home/index.php';
         require APP . 'view/_templates/footer_firmante.php';
@@ -127,6 +128,7 @@ class HomeController
                         'ano_curso_seminario' => $cursoSeminarioCampoProfesional['anoCertificadoCampoProfesional'],
                         'institucion_curso_seminario' => $cursoSeminarioCampoProfesional['institucionCampoProfesional'],
                         'nombre_curso_seminario' => $cursoSeminarioCampoProfesional['cursoSeminarioCampoProfesional'],
+                        'tipo_seminario' => $cursoSeminarioCampoProfesional['tipoCursoSeminarioCampoProfesional'],
                         'duracion_curso_seminario' => $cursoSeminarioCampoProfesional['duracionCampoProfesional']
                     ];
 
@@ -144,6 +146,7 @@ class HomeController
                         'ano_curso_ambito_academico' => $cursoSeminarioAmbitoAcademico['anoCertificadoAmbitoAcademico'],
                         'institucion_curso_ambito_academico' => $cursoSeminarioAmbitoAcademico['institucionAmbitoAcademico'],
                         'nombre_curso_ambito_academico' => $cursoSeminarioAmbitoAcademico['cursoSeminarioAmbitoAcademico'],
+                        'tipo_seminario' => $cursoSeminarioAmbitoAcademico['tipoCursoSeminarioAmbitoAcademico'],
                         'duracion_curso_ambito_academico' => $cursoSeminarioAmbitoAcademico['duracionAmbitoAcademico']
                     ];
 
@@ -161,6 +164,7 @@ class HomeController
                         'ano_curso_ambito_evaluacion' => $cursoSeminarioAmbitoEvaluacion['anoCertificadoAmbitoEvaluacion'],
                         'institucion_curso_ambito_evaluacion' => $cursoSeminarioAmbitoEvaluacion['institucionAmbitoEvaluacion'],
                         'nombre_curso_ambito_evaluacion' => $cursoSeminarioAmbitoEvaluacion['cursoSeminarioAmbitoEvaluacion'],
+                        'tipo_seminario' => $cursoSeminarioAmbitoEvaluacion['tipoCursoSeminarioAmbitoEvaluacion'],
                         'duracion_curso_ambito_evaluacion' => $cursoSeminarioAmbitoEvaluacion['duracionAmbitoEvaluacion']
                     ];
 
@@ -173,7 +177,6 @@ class HomeController
             //!* experiencia laboral
             if (!empty($_POST['experienciaLaboral'])) {
                 foreach ($_POST['experienciaLaboral'] as $index => $experienciaLaboral) {
-                    // ! no procesa el pdf de la experiencia laboral
                     // Inicializar la variable para el archivo PDF
                     $pdfExperienciaLaboral = '';
             
@@ -404,7 +407,28 @@ class HomeController
                 }
             }
 
-            echo "éxito";
+            // echo "éxito";
+
+            // $numDoc = $_POST['numDoc'];
+            // $Home = new Home();
+            $contador = $this->model->contador($numDoc);
+            // echo $numDoc;
+
+            if ($contador != false) {
+                //condicion para el contador un digito agregar 00
+                if ($contador->id < 10) {
+                    echo '00'.$contador->id;
+
+                }else if ($contador->id < 100) { 
+                    echo '0'.$contador->id;
+
+                }else if ($contador->id < 1000) {
+                    echo $contador->id;
+                }
+            }else{
+                echo 'ID NO EXISTE';
+            }
+
         } catch (Exception $e) {
             echo "Error";
         }
@@ -456,4 +480,26 @@ class HomeController
         // Retornar solo el nombre del archivo para almacenarlo en la base de datos
         return $nombreArchivo;
     }
+
+    // public function buscar_contador(){
+    //     $numDoc = $_POST['numDoc'];
+    //     $Home = new Home();
+    //     $contador = $Home->contador($numDoc);
+    //     // echo $numDoc;
+
+    //     if ($contador != false) {
+    //         //condicion para el contador un digito agregar 00
+    //         if ($contador->id < 10) {
+    //             echo '00'.$contador->id;
+
+    //         }else if ($contador->id < 100) { 
+    //             echo '0'.$contador->id;
+
+    //         }else if ($contador->id < 1000) {
+    //             echo $contador->id;
+    //         }
+    //     }else{
+    //         echo 'ID NO EXISTE';
+    //     }
+    // }
 }

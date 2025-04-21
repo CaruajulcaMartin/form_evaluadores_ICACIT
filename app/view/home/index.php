@@ -1,7 +1,9 @@
 <header class="container header">
-  <img src="<?php echo URL; ?>images/ICACIT_2025.jpg" alt="logo de ICACIT">
+  <img src="<?php echo URL; ?>assets/logo ICACIT.png" alt="logo de ICACIT">
   <!-- nuevo titulo -->
-  <h2 class="title text-center" style="color: #002060">Formulario de Inscripción al Programa de Formación de Evaluadores ICACIT</h2>
+  <h2 class="title text-center" style="color: #002060">Formulario de aplicación al Programa de Formación de Evaluadores ICACIT </h2>
+  <input type="hidden" id="contador" name="contador">
+
 </header>
 
 <main class="container main">
@@ -22,16 +24,16 @@
 
       <div class="row g-3 formulario">
         <div class="col-md-4">
-          <label class="form-label">PrimerApellido:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="apellido1" required>
+          <label class="form-label">Primer Apellido:<span class="text-danger">*</span></label>
+          <input type="text" class="form-control" name="apellido1" placeholder="Ej: Perez" required>
         </div>
         <div class="col-md-4">
           <label class="form-label">Segundo Apellido:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="apellido2" required>
+          <input type="text" class="form-control" name="apellido2" placeholder="Ej: Lopez" required>
         </div>
         <div class="col-md-4">
           <label class="form-label">Nombres Completos:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="nombresCompletos" required>
+          <input type="text" class="form-control" name="nombresCompletos" placeholder="Ej: Juan" required>
         </div>
         <div class="col-md-2">
           <label class="form-label">Tipo de Identidad:<span class="text-danger">*</span></label>
@@ -45,7 +47,7 @@
         </div>
         <div class="col-md-3">
           <label class="form-label">Numero de Identidad:<span class="text-danger">*</span></label>
-          <input type="text" name="numDoc" id="numDoc" class="form-control" required disabled>
+          <input type="text" name="numDoc" id="numDoc" class="form-control" placeholder="Ej: 12345678" required disabled>
         </div>
 
         <!-- archivo de identidad adjunto -->
@@ -56,6 +58,7 @@
             accept="application/pdf" required>
           <small class="form-text text-muted">Solo se permiten archivos PDF con un tamaño máximo de 5
             MB.</small>
+            <input type="hidden" id="hiddenPdfIdentidad" name="pdfIdentidadHidden">
         </div>
 
         <div class="col-md-3">
@@ -102,7 +105,7 @@
         <div class="col-md-6">
           <label class="form-label">Correo Electrónico:<span class="text-danger">*</span></label>
           <input type="email" class="form-control" name="correoElectronico" id="correoElectronico"
-            required>
+          placeholder="Ej: minombre@example.com" required>
         </div>
         <!-- <div class="col-md-4">
                         <label class="form-label">Correo Electrónico Secundario:<span
@@ -153,11 +156,11 @@
           </div>
           <div class="col-md-4">
             <label class="form-label">Dirección:<span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="direccion" required>
+            <input type="text" class="form-control" name="direccion" placeholder="Ej: Av. Siempreviva" required>
           </div>
           <div class="col-md-4">
             <label class="form-label">Número:<span class="text-danger">*</span></label>
-            <input type="number" class="form-control" name="numeroDireccion" min="1" step="1" required>
+            <input type="number" class="form-control" name="numeroDireccion" placeholder="Ej: 123" min="1" step="1" required>
           </div>
         </div>
         <div class="col-md-3">
@@ -180,15 +183,15 @@
           <!-- <select class="form-control" name="PaisDatoDominicialProvincia" id="PaisDatoDominicialProvincia" required>
                             <option value="">--Seleccionar Provincia / Municipio--</option>
                         </select> -->
-          <input type="text" class="form-control" name="provinciaDatoDominicial" required>
+          <input type="text" class="form-control" name="provinciaDatoDominicial" placeholder="Ej: Lima" required>
         </div>
         <div class="col-md-3">
           <label class="form-label">Distrito:</label>
-          <input type="text" class="form-control" name="distritoDatoDominicial">
+          <input type="text" class="form-control" name="distritoDatoDominicial" placeholder="Ej: Miraflores">
         </div>
         <div class="col-md-12">
           <label class="form-label">Referencia del Domicilio:</label>
-          <textarea name="referenciaDomicilio" id="referenciaDomicilio" class="form-control" rows="3"></textarea>
+          <textarea name="referenciaDomicilio" id="referenciaDomicilio" class="form-control" rows="3" placeholder="Ej: Cerca de la escuela"></textarea>
           <small id="contadorReferenciaDomicilio" class="text-muted">Máximo 150 caracteres. Caracteres actuales:
             0</small>
           <div id="errorReferenciaDomicilio" class="text-danger mt-1" style="display: none;">
@@ -221,16 +224,16 @@
       <div class="row g-3 formulario">
         <div class="col-md-4">
           <label class="form-label">Nombre del Centro Laboral:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="centroLaboral" required>
+          <input type="text" class="form-control" name="centroLaboral" placeholder="Ej: Empresa ABC" required>
         </div>
         <div class="col-md-4">
           <label class="form-label">Cargo Actual:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="cargoActual" required>
+          <input type="text" class="form-control" name="cargoActual" placeholder="Ej: Web Developer" required>
         </div>
         <div class="col-md-4">
           <label class="form-label">Tiempo en el centro laboral (en años):<span
               class="text-danger">*</span></label>
-          <input type="number" class="form-control" name="tiempoLaboral" min="1" step="1" required>
+          <input type="number" class="form-control" name="tiempoLaboral" min="1" step="1" placeholder="Ej: 2" required>
         </div>
         <div class="col-md-4">
           <label class="form-label">País:<span class="text-danger">*</span></label>
@@ -240,11 +243,11 @@
         </div>
         <div class="col-md-4">
           <label class="form-label">Ciudad:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="ciudadInformacionLaboral" required>
+          <input type="text" class="form-control" name="ciudadInformacionLaboral" placeholder="Ej: Lima" required>
         </div>
         <div class="col-md-4">
           <label class="form-label">Rubro:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="rubroInformacionLaboral" required>
+          <input type="text" class="form-control" name="rubroInformacionLaboral" placeholder="Ej: Comercio" required>
         </div>
       </div>
 
@@ -260,16 +263,16 @@
                     </div> -->
         <div class="col-md-4">
           <label class="form-label">Nombres y Apellidos:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="nombresEmpleador" required>
+          <input type="text" class="form-control" name="nombresEmpleador" placeholder="Ej: Juan Perez" required>
         </div>
         <div class="col-md-4">
           <label class="form-label">Cargo del Empleador Actual:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="cargoEmpleador" required>
+          <input type="text" class="form-control" name="cargoEmpleador" placeholder="Ej: Gerente" required>
         </div>
         <div class="col-md-4">
           <label class="form-label">Correo Electrónico del Empleador Actual:<span
               class="text-danger">*</span></label>
-          <input type="email" class="form-control" name="correoEmpleador" required>
+          <input type="email" class="form-control" name="correoEmpleador" placeholder="Ej: gerente@example.com" required>
         </div>
       </div>
 
@@ -308,11 +311,12 @@
         <div class="col-md-4">
           <label class="form-label">Año de Graduación:<span class="text-danger">*</span></label>
           <input type="number" class="form-control" name="anoGraduacion" id="anoGraduacion" min="1900"
-            max="2099" step="1">
+            max="2099" step="1" placeholder="Ej: 2020">
         </div>
         <div class="col-md-4">
           <label class="form-label">Universidad:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="institucionEducativa" id="institucionEducativa">
+          <input type="text" class="form-control" name="institucionEducativa" id="institucionEducativa" 
+            placeholder="Ej: Universidad Nacional de San Marcos">
         </div>
         <!-- <div class="col-md-4">
                         <label class="form-label">Especialidad:<span class="text-danger">*</span></label>
@@ -320,7 +324,7 @@
                     </div> -->
         <div class="col-md-4">
           <label class="form-label">Nombre del Grado:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="nombreGrado" id="nombreGrado">
+          <input type="text" class="form-control" name="nombreGrado" id="nombreGrado" placeholder="Ej: Ingeniero de Sistemas">
         </div>
         <div class="col-md-4">
           <label class="form-label">Adjuntar PDF:<span class="text-danger">*</span></label>
@@ -335,7 +339,7 @@
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre tu formación académica"
             onclick="agregarFormacion()">
-            Agregar Formación Académica
+            Registrar Formación Académica
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -368,17 +372,11 @@
       </table>
 
       <!-- Alerta de Nota -->
-      <div class="alert alert-info mt-3 p-2 d-flex align-items-center" role="alert">
-        <i class="fas fa-info-circle me-2"></i>
-        <div class="small">
-          <a class="text-decoration-none" data-bs-toggle="collapse" href="#notaCollapse2" role="button">
-            <strong>Nota:</strong> Ver detalles...
-          </a>
-          <div class="collapse" id="notaCollapse2">
-            En caso de contar con más registros de formación académica, favor
-            adicionar las filas que sean necesarias.
-          </div>
-        </div>
+      <div class="alert alert-info mt-3 p-2" role="alert">
+          <ul class="list-unstyled small mb-0">
+            <li><i class="fas fa-info-circle me-2"></i><strong>Nota:</strong> En caso de contar con más registros de formación académica, favor
+            adicionar las filas que sean necesarias.</li>
+          </ul>
       </div>
 
       <!-- seccion 3.2: idiomas -->
@@ -390,7 +388,7 @@
       <div class="row g-3 formulario">
         <div class="col-md-2">
           <label class="form-label">Idioma:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="idioma" id="idioma">
+          <input type="text" class="form-control" name="idioma" id="idioma" placeholder="Ej: Inglés">
         </div>
 
         <div class="col-md-3">
@@ -429,7 +427,7 @@
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre tus idiomas que domines"
             onclick="agregarIdioma()">
-            Agregar Idiomas
+            Registrar Idioma
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -461,35 +459,44 @@
       <!-- seccion 3.3: cursos y seminarios -->
       <div class="section-title">
         <i class="fa-solid fa-user-graduate"></i>
-        <h4>Cursos y Seminarios (últimos 3 años)</h4>
+        <h4>Participación de capacitaciones (últimos 3 años)</h4>
       </div>
 
       <!-- seccion 3.3.1: relacionados a su campo profesional -->
       <div class="subsection-title row g-3 formulario">
         <!-- Subsección: Campo Profesional -->
-        <h5>Relacionados a su campo profesional:</h5>
+        <h5>a) Registre capacitaciones relacionadas a su campo profesional:</h5>
         <div class="row g-3">
           <div class="col-md-2">
-            <label class="form-label">Año:<span class="text-danger">*</span></label>
+            <label class="form-label">Año:</label>
             <input type="number" class="form-control" name="anoCertificadoCampoProfesional"
-              id="anoCertificadoCampoProfesional" min="1900" max="2099" step="1">
+              id="anoCertificadoCampoProfesional" min="1900" max="2099" step="1" placeholder="Ej: 2020">
           </div>
-          <div class="col-md-3">
-            <label class="form-label">Institución:<span class="text-danger">*</span></label>
+          <div class="col-md-4">
+            <label class="form-label">Institución Educativa:</label>
             <input type="text" class="form-control" name="institucionCampoProfesional"
-              id="institucionCampoProfesional">
+              id="institucionCampoProfesional" placeholder="Ej: Universidad Nacional de San Marcos">
           </div>
-          <div class="col-md-3">
-            <label class="form-label">Nombre del Curso o Seminario:<span
+          <div class="col-md-4">
+            <label class="form-label">Nombre de la Capacitación:<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control" name="cursoSeminarioCampoProfesional"
-              id="cursoSeminarioCampoProfesional">
+              id="cursoSeminarioCampoProfesional" placeholder="Ej: Introducción a la programación en Python">
           </div>
           <div class="col-md-2">
-            <label class="form-label">Duración (8 horas mínimo):<span
-                class="text-danger">*</span></label>
+            <label class="form-label">Tipo de Capacitación:</label>
+            <select class="form-select" name="tipoCursoSeminarioCampoProfesional" id="tipoCursoSeminarioCampoProfesional">
+              <option selected>--Seleccionar--</option>
+              <option>Diplomado</option>
+              <option>Curso</option>
+              <option>Taller</option>
+              <option>Seminario</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Duración <small>(8 horas mínimo)</small>:</label>
             <input type="number" class="form-control" name="duracionCampoProfesional"
-              id="duracionCampoProfesional" min="8" max="360" step="1">
+              id="duracionCampoProfesional" min="8" max="360" step="1" placeholder="Ej: 20">
           </div>
           <!-- Botón para agregar un nuevo registro -->
           <div class="col-md-2 d-flex align-items-end">
@@ -497,19 +504,20 @@
               data-bs-placement="top" data-bs-custom-class="custom-tooltip"
               data-bs-title="Haz clic aquí para agregar más información sobre tus cursos y seminarios en relacion a tu campo profesional"
               onclick="agregarCursosAmbitoProfesional()">
-              Agregar Cursos
+              Registrar Curso
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
         </div>
 
         <!-- Tabla de Campo Profesional -->
-        <table class="table table-striped required" data-title="Relacionados a su campo profesional:">
+        <table class="table table-striped" data-title="Relacionados a su campo profesional:">
           <thead>
             <tr>
               <th scope="col">Año</th>
               <th scope="col">Institución</th>
               <th scope="col">Curso o Seminario</th>
+              <th scope="col">Tipo de Capacitación</th>
               <th scope="col">Duración (en horas)</th>
               <th scope="col">Acción</th>
             </tr>
@@ -524,29 +532,37 @@
 
       <!-- seccion 3.3.2: relacionados a su ambito academico -->
       <div class="subsection-title row g-3 formulario">
-        <h5>Relacionados a su ámbito académico:</h5>
+        <h5>b) Registre capacitaciones relacionadas a su ámbito académico:</h5>
         <div class="row g-3 formulario">
           <div class="col-md-2">
-            <label class="form-label">Año:<span class="text-danger">*</span></label>
+            <label class="form-label">Año:</label>
             <input type="number" class="form-control" name="anoCertificadoAmbitoAcademico"
-              id="anoCertificadoAmbitoAcademico" min="1900" max="2099" step="1">
+              id="anoCertificadoAmbitoAcademico" min="1900" max="2099" step="1" placeholder="Ej: 2022">
           </div>
-          <div class="col-md-3">
-            <label class="form-label">Institución:<span class="text-danger">*</span></label>
+          <div class="col-md-4">
+            <label class="form-label">Institución Educativa:</label>
             <input type="text" class="form-control" name="institucionAmbitoAcademico"
-              id="institucionAmbitoAcademico">
+              id="institucionAmbitoAcademico" placeholder="Ej: Universidad Nacional de Cajamarca">
           </div>
-          <div class="col-md-3">
-            <label class="form-label">Nombre del Curso o Seminario:<span
-                class="text-danger">*</span></label>
+          <div class="col-md-4">
+            <label class="form-label">Nombre de la Capacitación:</label>
             <input type="text" class="form-control" name="cursoSeminarioAmbitoAcademico"
-              id="cursoSeminarioAmbitoAcademico">
+              id="cursoSeminarioAmbitoAcademico" placeholder="Ej: Taller de Excel Avanzado">
           </div>
           <div class="col-md-2">
-            <label class="form-label">Duración (8 horas mínimo):<span
-                class="text-danger">*</span></label>
+            <label class="form-label">Tipo de Capacitación:</label>
+            <select class="form-select" name="tipoCursoSeminarioAmbitoAcademico" id="tipoCursoSeminarioAmbitoAcademico">
+              <option selected>--Seleccionar--</option>
+              <option>Diplomado</option>
+              <option>Curso</option>
+              <option>Taller</option>
+              <option>Seminario</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Duración <small>(8 horas mínimo)</small>:</label>
             <input type="number" class="form-control" name="duracionAmbitoAcademico"
-              id="duracionAmbitoAcademico" min="8" max="360" step="1">
+              id="duracionAmbitoAcademico" min="8" max="360" step="1" placeholder="Ej: 15">
           </div>
 
           <!-- Botón para agregar un nuevo registro -->
@@ -555,18 +571,19 @@
               data-bs-placement="top" data-bs-custom-class="custom-tooltip"
               data-bs-title="Haz clic aquí para agregar más información sobre tus cursos y seminarios en relacion a su ámbito académico"
               onclick="agregarCursosAmbitoAcademico()">
-              Agregar Cursos
+              Registrar Curso
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
         </div>
 
-        <table class="table table-striped required">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th scope="col">Año</th>
               <th scope="col">Institución</th>
               <th scope="col">Curso o Seminario</th>
+              <th scope="col">Tipo de Capacitación</th>
               <th scope="col">Duración (en horas)</th>
               <th scope="col">Acción</th>
             </tr>
@@ -581,27 +598,35 @@
 
       <!-- seccion 3.3.3: relacionados a su ambito de evaluacion con fines de acreditacion -->
       <div class="subsection-title row g-3 formulario">
-        <h5>Relacionados a su ámbito de evaluación con fines de acreditación:</h5>
+        <h5>c) Registre capacitaciones relacionadas a su ámbito de evaluación con fines de acreditación:</h5>
         <div class="row g-3 formulario">
           <div class="col-md-2">
-            <label class="form-label">Año:<span class="text-danger">*</span></label>
+            <label class="form-label">Año:</label>
             <input type="number" class="form-control" name="anoCertificadoAmbitoEvaluacion" id="anoCertificado"
-              min="1900" max="2099" step="1">
+              min="1900" max="2099" step="1" placeholder="Ej: 2021">
           </div>
-          <div class="col-md-3">
-            <label class="form-label">Institución:<span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="institucionAmbitoEvaluacion" id="institucion">
+          <div class="col-md-4">
+            <label class="form-label">Institución Educativa:</label>
+            <input type="text" class="form-control" name="institucionAmbitoEvaluacion" id="institucion" placeholder="Ej: Universidad Nacional de Piura">
           </div>
-          <div class="col-md-3">
-            <label class="form-label">Nombre del Curso o Seminario:<span
-                class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="cursoSeminarioAmbitoEvaluacion" id="cursoSeminario">
+          <div class="col-md-4">
+            <label class="form-label">Nombre de la Capacitación:</label>
+            <input type="text" class="form-control" name="cursoSeminarioAmbitoEvaluacion" id="cursoSeminario" placeholder="Ej: Taller de Programación Avanzada">
           </div>
           <div class="col-md-2">
-            <label class="form-label">Duración (8 horas mínimo):<span
-                class="text-danger">*</span></label>
+            <label class="form-label">Tipo de Capacitación:</label>
+            <select class="form-select" name="tipoCursoSeminarioAmbitoEvaluacion" id="tipoCursoSeminario">
+              <option selected>--Seleccionar--</option>
+              <option>Diplomado</option>
+              <option>Curso</option>
+              <option>Taller</option>
+              <option>Seminario</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Duración <small>(8 horas mínimo)</small>:</label>
             <input type="number" class="form-control" name="duracionAmbitoEvaluacion" id="duracion" min="8" max="360"
-              step="1">
+              step="1" placeholder="Ej: 10">
           </div>
 
           <!-- Botón para agregar un nuevo registro -->
@@ -610,18 +635,19 @@
               data-bs-placement="top" data-bs-custom-class="custom-tooltip"
               data-bs-title="Haz clic aquí para agregar más información sobre tus cursos y seminarios en relacion a su ámbito de evaluación con fines de acreditación"
               onclick="agregarCursos()">
-              Agregar Cursos
+              Registrar Curso
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
         </div>
 
-        <table class="table table-striped required">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th scope="col">Año</th>
               <th scope="col">Institución</th>
               <th scope="col">Curso o Seminario</th>
+              <th scope="col">Tipo de Capacitación</th>
               <th scope="col">Duración (en horas)</th>
               <th scope="col">Acción</th>
             </tr>
@@ -657,11 +683,12 @@
       <div class="row g-3 formulario">
         <div class="col-md-4">
           <label class="form-label">Institución o Empresa:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="institucionEmpresaExperienciaLaboral" id="institucionEmpresa">
+          <input type="text" class="form-control" name="institucionEmpresaExperienciaLaboral" id="institucionEmpresa" 
+            placeholder="Ej: Empresa CBC S.A.C.">
         </div>
         <div class="col-md-4">
           <label class="form-label">Cargo desempeñado:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="cargoDesempeñadoExperienciaLaboral" id="cargoDesempeñado">
+          <input type="text" class="form-control" name="cargoDesempeñadoExperienciaLaboral" id="cargoDesempeñado" placeholder="Ej: Analista de Sistemas">
         </div>
         <div class="col-md-2">
           <label class="form-label">Fecha de Inicio:<span class="text-danger">*</span></label>
@@ -680,7 +707,7 @@
         </div>
         <div class="col-md-4">
           <label class="form-label">Ciudad:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="ciudadExperienciaLaboral" id="ciudadEmpresa">
+          <input type="text" class="form-control" name="ciudadExperienciaLaboral" id="ciudadEmpresa" placeholder="Ej: Piura">
         </div>
         <div class="col-md-4">
           <label class="form-label">Adjuntar PDF:<span class="text-danger">*</span></label>
@@ -696,7 +723,7 @@
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre su experiencia laboral"
             onclick="agregarExperiencia()">
-            Agregar Experiencia
+            Registrar Experiencia
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -757,7 +784,7 @@
         <h5>(Dictado de talleres, capacitaciones y/o seminarios)</h5>
         <div class="col-md-4">
           <label class="form-label">Nombre de la Institución:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="institucionExperienciaDocente" id="institucionDocente">
+          <input type="text" class="form-control" name="institucionExperienciaDocente" id="institucionDocente" placeholder="Ej: Universidad de Piura">
         </div>
         <div class="col-md-4">
           <label class="form-label">País:<span class="text-danger">*</span></label>
@@ -768,22 +795,22 @@
         </div>
         <div class="col-md-4">
           <label class="form-label">Ciudad:<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="ciudadExperienciaDocente" id="ciudadDocente">
+          <input type="text" class="form-control" name="ciudadExperienciaDocente" id="ciudadDocente" placeholder="Ej: Piura">
         </div>
         <div class="col-md-6">
           <label class="form-label">Nombre del Programa Profesional o Unidad Funcional de la Empresa:<span
               class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="programaProfesionalExperienciaDocente" id="programaProfesional">
+          <input type="text" class="form-control" name="programaProfesionalExperienciaDocente" id="programaProfesional" placeholder="Ej: Ingeniería de Sistemas">
         </div>
         <div class="col-md-6">
           <label class="form-label">Curso o Capacitación Impartido:<span
               class="text-danger">*</span></label>
-          <input type="text" class="form-control" name="cursoCapacitacionImpartidoExperienciaDocente" id="cursosImpartidos">
+          <input type="text" class="form-control" name="cursoCapacitacionImpartidoExperienciaDocente" id="cursosImpartidos" placeholder="Ej: Sistemas Operativos">
         </div>
         <div class="col-md-12">
           <label class="form-label">Funciones Principales:</label>
           <textarea name="funcionesPrincipales" id="funcionesPrincipales" class="form-control" rows="3"
-            placeholder="Ingrese las funciones principales"></textarea>
+            placeholder="Ej: Dictado de talleres, capacitaciones y/o seminarios"></textarea>
           <small id="contadorObservacionesPrincipales" class="text-muted">Máximo 150 caracteres.
             caracteres
             actuales: 0</small>
@@ -814,7 +841,7 @@
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre su experiencia laboral como docente en educación superior"
             onclick="agregarExperienciaDocente()">
-            Agregar Experiencia
+            Registrar Experiencia
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -858,11 +885,11 @@
       <div class="row g-3 formulario">
         <div class="col-md-4">
           <label class="form-label">Institución:</label>
-          <input type="text" class="form-control" name="institucionComite" id="institucionComite">
+          <input type="text" class="form-control" name="institucionComite" id="institucionComite" placeholder="Ej: Universidad de los Andes">
         </div>
         <div class="col-md-4">
           <label class="form-label">Cargo desempeñado:</label>
-          <input type="text" class="form-control" name="cargoComite" id="cargoComite">
+          <input type="text" class="form-control" name="cargoComite" id="cargoComite" placeholder="Ej: Comité de calidad">
         </div>
         <div class="col-md-4">
           <label class="form-label">Modelos de Calidad Desarrollados:</label>
@@ -884,7 +911,7 @@
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre su experiencia laboral como parte de comité de calidad"
             onclick="agregarExperienciaComite()">
-            Agregar Experiencia
+            Registrar Experiencia
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -922,7 +949,7 @@
       <div class="row g-3 formulario">
         <div class="col-md-4">
           <label class="form-label">Agencia Acreditadora:</label>
-          <input type="text" class="form-control" name="agenciaAcreditadora" id="agenciaAcreditadora">
+          <input type="text" class="form-control" name="agenciaAcreditadora" id="agenciaAcreditadora" placeholder="Ej: ICACIT">
         </div>
         <div class="col-md-4">
           <label class="form-label">Año de Inicio:</label>
@@ -943,15 +970,15 @@
         <!-- estos datos se mostraran en la tabla -->
         <div class="col-md-4">
           <label class="form-label">Nombre Entidad:</label>
-          <input type="text" class="form-control" name="nombreEntidad" id="nombreEntidad">
+          <input type="text" class="form-control" name="nombreEntidad" id="nombreEntidad" placeholder="Ej: Universidad de Lima">
         </div>
         <div class="col-md-4">
           <label class="form-label">Programa:</label>
-          <input type="text" class="form-control" name="programaEvaluador" id="programaEvaluador">
+          <input type="text" class="form-control" name="programaEvaluador" id="programaEvaluador" placeholder="Ej: Ingeniería de Sistemas">
         </div>
         <div class="col-md-4">
           <label class="form-label">Cargo:</label>
-          <input type="text" class="form-control" name="cargoEvaluador" id="cargoEvaluador">
+          <input type="text" class="form-control" name="cargoEvaluador" id="cargoEvaluador" placeholder="Ej: Evaluador">
         </div>
         <div class="col-md-3">
           <label class="form-label">País:</label>
@@ -962,7 +989,7 @@
         </div>
         <div class="col-md-3">
           <label class="form-label">Ciudad:</label>
-          <input type="text" class="form-control" name="ciudadEvaluador" id="ciudadEvaluador">
+          <input type="text" class="form-control" name="ciudadEvaluador" id="ciudadEvaluador" placeholder="Ej: Lima">
         </div>
         <div class="col-md-3">
           <label class="form-label">Fecha de Evaluación:</label>
@@ -975,7 +1002,7 @@
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre su experiencia laboral como par evaluador"
             onclick="agregarExperienciaEvaluador()">
-            Agregar Experiencia
+            Registrar Experiencia
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -1010,11 +1037,11 @@
       <div class="row g-3 formulario">
         <div class="col-md-4">
           <label class="form-label">Asociación Profesional:</label>
-          <input type="text" class="form-control" name="asociacionProfesional" id="asociacionProfesional">
+          <input type="text" class="form-control" name="asociacionProfesional" id="asociacionProfesional" placeholder="Ej: IEEE"> 
         </div>
         <div class="col-md-3">
           <label class="form-label">Número de la membresía:</label>
-          <input type="number" class="form-control" name="numeroMembresia" id="numeroMembresia">
+          <input type="number" class="form-control" name="numeroMembresia" id="numeroMembresia" placeholder="Ej: 123456789">
         </div>
         <div class="col-md-2">
           <label class="form-label">Grado:</label>
@@ -1028,7 +1055,7 @@
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre sus membresías en asociaciones profesionales "
             onclick="agregarMembresia()">
-            Agregar Experiencia
+            Registrar Experiencia
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -1055,7 +1082,7 @@
 
     <!-- seccion5:  Información Sobre Investigación. -->
     <div class="form-section" id="section5">
-      <h2><b>Sección 05:</b> Información Sobre Investigación</h2>
+      <h2><b>Sección 05:</b> Registro de investigaciones realizadas</h2>
       <!-- seccion 5.1:  Publicaciones, Artículos y Revistas -->
       <div class="section-title">
         <i class="fa-brands fa-readme"></i>
@@ -1070,7 +1097,8 @@
         </div> -->
         <div class="col-md-2">
           <label class="form-label">Año:</label>
-          <input type="date" class="form-control" name="fechaPublicacion" id="fechaPublicacion">
+          <input type="date" class="form-control" name="fechaPublicacion" id="fechaPublicacion" 
+            min="1900-01-01" max="2099-12-31" step="1">
         </div>
         <div class="col-md-6">
           <label class="form-label">Revista o Congreso:</label>
@@ -1085,7 +1113,7 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Nombre de la investigación:</label>
-          <input type="text" class="form-control" name="nombreInvestigacion" id="nombreInvestigacion">
+          <input type="text" class="form-control" name="nombreInvestigacion" id="nombreInvestigacion" placeholder="Ej: Investigación de la inteligencia artificial en la educación">
         </div>
         <div class="col-md-4">
           <label class="form-label">Información de Autor(es):</label>
@@ -1100,7 +1128,7 @@
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre sus investigaciones"
             onclick="agregarInvestigacion()">
-            Agregar Investigación
+            Registrar Investigación
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -1149,21 +1177,22 @@
         <div class="col-md-2">
           <label class="form-label">Año:</label>
           <input type="number" class="form-control" name="anoReconocimiento" id="anoReconocimiento"
-            min="1900" max="2099" step="1">
+            min="1900" max="2099" step="1" placeholder="Ej: 2023">
         </div>
         <div class="col-md-5">
           <label class="form-label">Institución / Empresa:</label>
           <input type="text" class="form-control" name="institucionReconocimiento"
-            id="institucionReconocimiento">
+            id="institucionReconocimiento" placeholder="Ej: Universidad de Piura">
         </div>
         <div class="col-md-5">
           <label class="form-label">Nombre del Reconocimiento / Premio:</label>
-          <input type="text" class="form-control" name="nombreReconocimiento" id="nombreReconocimiento">
+          <input type="text" class="form-control" name="nombreReconocimiento" id="nombreReconocimiento" 
+            placeholder="Ej: Mejor Docente del Año">
         </div>
         <div class="col-md-6">
           <label class="form-label">Descripción Reconocimiento / Premio:</label>
           <textarea name="descripcionReconocimiento" id="descripcionReconocimiento" class="form-control"
-            rows="4"></textarea>
+            rows="4" placeholder="Ej: Mejor Docente del Año 2023"></textarea>
           <small id="contadorDescripcionReconocimiento" class="text-muted">Máximo 150 palabras. Palabras actuales:
             0</small>
           <div id="errorDescripcion" class="text-danger mt-1" style="display: none;">
@@ -1178,7 +1207,7 @@
             data-bs-placement="top" data-bs-custom-class="custom-tooltip"
             data-bs-title="Haz clic aquí para agregar más información sobre sus premios y reconocimientos"
             onclick="agregarPremio()">
-            Agregar Reconocimientos
+            Registrar Reconocimiento
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -1216,7 +1245,7 @@
         <div class="col-12">
           <!-- <label class="form-label">Carta de Presentación:<span class="text-danger">*</span></label> -->
           <textarea name="cartaPresentacion" id="descripcionContribucion" class="form-control"
-            rows="6" required></textarea>
+            rows="6" required placeholder="Ej: Me interesa ser parte del Exclusivo Staff Internacional de Evaluadores ICACIT"></textarea>
           <small id="contadorPalabras" class="text-muted">Maximo 400 palabras. Palabras actuales:
             0</small>
           <div id="mensajeError" class="text-danger mt-1" style="display: none;"><b>Nota:</b> Has excedido
@@ -1273,9 +1302,9 @@
       <div class="modal-body" id="previewModalBody">
         <!-- El contenido de la previsualización se inserta aquí -->
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-info" onclick="downloadPDF()">Descargar PDF</button>
+      <div class="modal-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+        <!-- <button type="button" class="btn btn-info" onclick="downloadPDF()">Descargar PDF</button> -->
         <button type="submit" class="btn btn-success" id="btnEnviarFormulario">Enviar Formulario</button>
       </div>
     </div>
@@ -1299,3 +1328,22 @@
     </div>
   </div>
 </div>
+
+<!-- modal de envio de formulario -->
+<div class="modal fade" id="modalMensaje" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Notificación</h5>
+      </div>
+      <div class="modal-body">
+        <!-- Aquí se insertará el mensaje dinámicamente -->
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-info text-white" onclick="downloadPDF()">Descargar PDF</button>
+        <button type="button" class="btn btn-danger" id="btnCerrarModal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

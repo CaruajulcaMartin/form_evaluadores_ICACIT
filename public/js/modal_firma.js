@@ -1,21 +1,15 @@
 function enviarFormulario() {
-  // Crear un objeto FormData con los datos del formulario
   const formData = new FormData(document.getElementById("formularioEvaluador"));
 
-  // Ejecutar manualmente los scripts de recolección de datos
+  // Ejecutar scripts de recolección de datos
   recolectarDatosTablas(formData);
   recolectarDatosTablasExperiencia(formData);
   recolectarDatosTablasInvestigaciones(formData);
   recolectarDatosTablasPremios(formData);
-  // Agrega aquí las funciones de recolección de datos de otras tablas...
 
-  // Depuración: Imprimir los datos que se están enviando
-  console.log("Datos del formulario:");
-  for (let [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
+  // Deshabilitar el botón para evitar doble envío
+  $("#btnEnviarFormulario").prop("disabled", true);
 
-  // Enviar los datos al servidor mediante AJAX
   $.ajax({
     url: url + "/Home/enviarFormulario",
     method: "POST",
@@ -23,28 +17,71 @@ function enviarFormulario() {
     contentType: false,
     processData: false,
     success: function (data) {
-      console.log("Respuesta del servidor:", data); // Depuración
-      alert("Formulario enviado con éxito. Respuesta del servidor: " + data); 
+      // alert(data);
+      $("#contador").val(data);
+
+      $("#modalMensaje .modal-body").html(`
+        <h5 class="text-success">¡Felicidades!</h5>
+        <p>Su formulario de aplicación al programa de evaluadores ICACIT se ha enviado con éxito.</p>
+        <p>Desde el correo <strong>evaluadores@icacit.org.pe</strong> recibirá la respuesta a su aplicación.</p>
+        <p>Tenga buen día.</p>
+      `);
+      $("#modalMensaje").modal("show");
+
+      // Resetear el formulario
       $("#formularioEvaluador")[0].reset();
 
-      // Cerrar el modal después de enviar el formulario
-      $("#previewModal").modal("hide");
+      // Cerrar la pestaña
+      setTimeout(() => window.close(), 3000);
     },
+
     error: function (xhr, status, error) {
-      console.error("Error en la solicitud AJAX:", xhr.responseText); // Depuración
-      alert(
-        "Ocurrió un error al enviar el formulario. Por favor, inténtalo de nuevo. Detalles: " +
-          xhr.responseText
-      );
+      console.error("Error en la solicitud AJAX:", xhr.responseText);
+      $("#modalMensaje .modal-body").html(`
+        <h5 class="text-danger">Error</h5>
+        <p>Ocurrió un error al enviar el formulario. Por favor, inténtelo de nuevo.</p>
+        <p>Detalles: ${xhr.responseText}</p>
+      `);
+      $("#modalMensaje").modal("show");
+
+      // Habilitar el botón de nuevo
+      $("#btnEnviarFormulario").prop("disabled", false);
     },
   });
+
+  // alert(numero_documento);
+  // buscarContador();
 }
 
-// Asignar la función al botón dentro del modal
+//funcion buscador de contador
+// function buscarContador() {
+//   var numero_documento = $("#numDoc").val();
+
+//   var params = {
+//     numDoc: numero_documento,
+//   };
+
+//   $.ajax({
+//     url: url + "/Home/buscar_contador",
+//     dataType: "html",
+//     method: "POST",
+//     data: params,
+//     success: function (data) {
+//       // alert (data);
+//       $("#contador").val(data);
+//     },
+//   });
+// }
+
+// Evento para enviar el formulario
 $(document).ready(function () {
   $("#btnEnviarFormulario").on("click", function (e) {
-    e.preventDefault(); // Prevenir el comportamiento por defecto del botón
-    console.log("Botón de enviar clickeado"); // Depuración
-    enviarFormulario()
+    e.preventDefault();
+    enviarFormulario();
+  });
+
+  // Evento para cerrar el modal y redirigir a la página de inicio
+  $("#btnCerrarModal").on("click", function () {
+    window.location.href = "https://icacit.org.pe/formacion_evaluadores/";
   });
 });
