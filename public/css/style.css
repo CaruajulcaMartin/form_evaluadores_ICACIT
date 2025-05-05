@@ -52,7 +52,7 @@
     background-color: var(--color-secondary);
     border-radius: 15px;
     padding: 8px;
-    margin-top: 50px;
+    margin-top: 20px;
     font-size: var(--font-size-subtitle);
     color: var(--color-primary);
 
@@ -79,10 +79,10 @@
 }
 
 .form-section {
-    padding-bottom: 20px;
+    padding-top: 20px;
 
     @media (max-width: 768px) {
-        padding-bottom: 10px;
+        padding-top: 10px;
     }
 }
 

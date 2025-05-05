@@ -11,6 +11,16 @@ let contadorFormacion = 0; // Contador global para el índice de formación acad
 let contadorExperiencia = 0; // Contador global para el índice de experiencia laboral
 let contadorExperienciaDocente = 0; // Contador global para el índice de experiencia docente
 
+
+let registrosTablas = {
+    formacion: [],
+    idiomas: [],
+    cursosCampoProfesional: [],
+    cursosAcademicos: [],
+    cursosEvaluacion: []
+};
+
+
 // Función para mostrar el modal de alerta
 function mostrarAlerta(mensaje) {
     document.getElementById("alertModalBody").textContent = mensaje;
@@ -53,38 +63,39 @@ function validarPDF(pdfInput, maxSize = 5 * 1024 * 1024) {
 function crearFila(tablaId, valores, incluirPDF = false) {
     let tabla = document.getElementById(tablaId);
     let fila = document.createElement("tr");
+    fila.setAttribute('data-tabla', tablaId.replace('tabla', '').toLowerCase());
 
-    // Verificar si las fechas ya están registradas (solo para tablas de experiencia)
+    // Verificar si hay mensaje "No hay registros" y eliminarlo
+    // if (tabla.querySelector('tr td.text-center')) {
+    //     tabla.innerHTML = '';
+    // }
+
+    // Verificación de fechas (si aplica)
     if (tablaId === "tablaExperiencia" || tablaId === "tablaExperienciaDocente" || tablaId === "tablaExperienciaComite") {
-        let fechaInicio = valores[2]; // Asumiendo que la fecha de inicio está en la posición 2
-        let fechaFin = valores[3]; // Asumiendo que la fecha de fin está en la posición 3
+        let fechaInicio = valores[2];
+        let fechaFin = valores[3];
 
         if (fechasRegistradas.includes(fechaInicio) || fechasRegistradas.includes(fechaFin)) {
             mostrarAlerta("Las fechas ya han sido registradas.");
             return;
         }
-
-        // Agregar las fechas al arreglo de fechas registradas
-        fechasRegistradas.push(fechaInicio);
-        fechasRegistradas.push(fechaFin);
+        fechasRegistradas.push(fechaInicio, fechaFin);
     }
 
-    // Crear celdas con los valores proporcionados
+    // Crear celdas con los valores
     valores.forEach((valor) => {
         let celda = document.createElement("td");
-        celda.textContent = valor;
+        celda.textContent = valor || 'N/A';
         fila.appendChild(celda);
     });
 
-    // Si hay un PDF adjunto, agregar la celda de anexo con la clase "pdf-icon"
+    // Mostrar ícono de PDF si existe
     if (incluirPDF) {
-        let pdfUrl = URL.createObjectURL(incluirPDF);
-        let pdfIcon = `<a href="${pdfUrl}" target="_blank"><i class="fa-regular fa-file-pdf pdf-icon" style="color: red; font-size: 1.5em;"></i></a>`;
         let celdaAnexo = document.createElement("td");
-        celdaAnexo.innerHTML = pdfIcon;
+        celdaAnexo.innerHTML = `<i class="fa-regular fa-file-pdf pdf-icon" style="color: red; font-size: 1.5em;"></i>`;
         fila.appendChild(celdaAnexo);
 
-        // Determinar el nombre del input oculto según el tipo de tabla
+        // Input oculto para el nombre del archivo
         let nombreInputOculto;
         if (tablaId === "tablaFormacion") {
             nombreInputOculto = `formacionAcademica[${contadorFormacion}][pdfFormacionAcademica]`;
@@ -92,21 +103,22 @@ function crearFila(tablaId, valores, incluirPDF = false) {
         } else if (tablaId === "tablaExperiencia") {
             nombreInputOculto = `experienciaLaboral[${contadorExperiencia}][pdfExperienciaLaboral]`;
             contadorExperiencia++;
-        } else if (tablaId === "tablaExperienciaDocente"){
+        } else if (tablaId === "tablaExperienciaDocente") {
             nombreInputOculto = `experienciaDocente[${contadorExperienciaDocente}][pdfExperienciaDocente]`;
             contadorExperienciaDocente++;
         }
 
-        // Agregar un campo oculto para almacenar el nombre del archivo
         let inputOculto = document.createElement("input");
         inputOculto.type = "hidden";
-        inputOculto.name = nombreInputOculto; // Usar el nombre dinámico
-        inputOculto.value = incluirPDF.name; // Almacenar el nombre del archivo
+        inputOculto.name = nombreInputOculto;
+        inputOculto.value = incluirPDF.name;
         fila.appendChild(inputOculto);
 
-        // console.log(`PDF agregado al input oculto en la fila de la tabla ${tablaId}`);
+        // fila.setAttribute('data-pdf-file', JSON.stringify(pdfFile));
 
-        // Agregar el PDF al arreglo de anexos correspondiente
+        console.log(`PDF agregado al input oculto en la fila de la tabla ${tablaId}`);
+
+        // Agregar a arreglo de anexos
         if (tablaId === "tablaFormacion") {
             anexosTablasFormacionAcademica.push({ file: incluirPDF });
         } else if (tablaId === "tablaExperiencia") {
@@ -116,14 +128,14 @@ function crearFila(tablaId, valores, incluirPDF = false) {
         }
     }
 
-    // Agregar la celda de acción (botón para eliminar la fila)
+    // Botón de eliminar
     let celdaAccion = document.createElement("td");
-    celdaAccion.classList.add("accion-celda"); // Agregar clase específica
+    celdaAccion.classList.add("accion-celda");
     celdaAccion.innerHTML = `<button type="button" class="btn btn-danger" onclick="eliminarFila(this)"><i class="fa-solid fa-trash"></i></button>`;
     fila.appendChild(celdaAccion);
 
-    // Agregar la fila a la tabla
     tabla.appendChild(fila);
+    return fila;
 }
 
 // Función genérica para limpiar campos
@@ -141,19 +153,27 @@ function limpiarCampos(campos) {
 function eliminarFila(boton) {
     let fila = boton.parentElement.parentElement;
     let tipo = fila.cells[0].innerHTML;
+    let tablaId = fila.getAttribute('data-tabla');
 
+    // Lógica para tipos especiales (mantener tu código actual)
     if (tipo === "Pregrado") tipoPregradoAgregado = false;
     if (tipo === "Posdoctorado") tipoPosdoctoradoAgregado = false;
 
-    // Eliminar las fechas del arreglo de fechas registradas
-    if (fila.parentElement.id === "tablaExperiencia" || fila.parentElement.id === "tablaExperienciaDocente" || fila.parentElement.id === "tablaExperienciaComite") {
-        let fechaInicio = fila.cells[2].innerHTML; // Asumiendo que la fecha de inicio está en la posición 2
-        let fechaFin = fila.cells[3].innerHTML; // Asumiendo que la fecha de fin está en la posición 3
-
-        fechasRegistradas = fechasRegistradas.filter(fecha => fecha !== fechaInicio && fecha !== fechaFin);
+    // Eliminar de registrosTablas si tiene ID
+    const dataId = fila.getAttribute('data-id');
+    if (dataId) {
+        registrosTablas[tablaId] = registrosTablas[tablaId].filter(item => item.id !== dataId);
     }
 
     fila.remove();
+
+    // Mostrar "No hay registros" si la tabla queda vacía
+    // const tabla = document.getElementById(`tabla${tablaId.charAt(0).toUpperCase() + tablaId.slice(1)}`);
+    // if (tabla.rows.length === 0) {
+    //     const tr = document.createElement('tr');
+    //     tr.innerHTML = '<td colspan="100%" class="text-center">No hay registros</td>';
+    //     tabla.appendChild(tr);
+    // }
 }
 
 //funcion para validar año
@@ -196,7 +216,8 @@ function agregarFormacion() {
     if (tipo === "Posdoctorado") tipoPosdoctoradoAgregado = true;
 
     let valores = campos.map(campo => campo.value);
-    crearFila("tablaFormacion", valores, pdfInput.files[0]);
+    let fila = crearFila("tablaFormacion", valores, pdfInput.files[0]);
+    fila.setAttribute('data-id', 'new_' + Date.now());
     limpiarCampos([...campos, pdfInput]);
 }
 
@@ -234,7 +255,7 @@ function agregarCursosAmbitoProfesional(){
         return;
     }
 
-    let duracion = parseInt(campos[3].value);
+    let duracion = parseInt(campos[4].value);
     if (duracion < 8) {
         mostrarAlerta("La duración mínima debe ser de 8 horas.");
         return;
@@ -263,7 +284,7 @@ function agregarCursosAmbitoAcademico(){
         return;
     }
 
-    let duracion = parseInt(campos[3].value);
+    let duracion = parseInt(campos[4].value);
     if (duracion < 8) {
         mostrarAlerta("La duración mínima debe ser de 8 horas.");
         return;
@@ -292,7 +313,7 @@ function agregarCursos() {
         return;
     }
 
-    let duracion = parseInt(campos[3].value);
+    let duracion = parseInt(campos[4].value);
     if (duracion < 8) {
         mostrarAlerta("La duración mínima debe ser de 8 horas.");
         return;

@@ -22,6 +22,7 @@ class HomeController
         require APP . 'view/_templates/footer_firmante.php';
     }
 
+    /*
     public function enviarFormulario()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -480,7 +481,7 @@ class HomeController
         // Retornar solo el nombre del archivo para almacenarlo en la base de datos
         return $nombreArchivo;
     }
-
+*/
     // public function buscar_contador(){
     //     $numDoc = $_POST['numDoc'];
     //     $Home = new Home();

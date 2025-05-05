@@ -36,37 +36,53 @@ document.addEventListener("DOMContentLoaded", function () {
     // Función para validar textarea (límite de palabras)
     function validarTextarea(textareaId, contadorId, errorId, maximo, minimo = 0) {
         let textarea = document.getElementById(textareaId);
-        let contador = document.getElementById(contadorId);
-        let errorMensaje = document.getElementById(errorId);
-
-        textarea.addEventListener("input", function () {
-            let texto = this.value.trim();
-            let totalCaracteres = texto.length;
-            let totalPalabras = texto.split(/\s+/).filter(word => word.length > 0).length;
-
-            if (maximo === 150) {
-                contador.textContent = `Máximo ${maximo} caracteres. Caracteres actuales: ${totalCaracteres}`;
-                if (totalCaracteres > maximo) {
-                    errorMensaje.style.display = "block";
-                    errorMensaje.textContent = `No puedes escribir más de ${maximo} caracteres.`;
-                    this.value = texto.slice(0, maximo); // Limitar a maximo
-                } else {
-                    errorMensaje.style.display = "none";
+        // Puedes añadir let contador = document.getElementById(contadorId); y let errorMensaje = document.getElementById(errorId); aquí si también necesitas validarlos.
+    
+        // Verificar si el textarea existe antes de añadir el listener
+        if (textarea) { // <--- Añadir esta verificación
+            textarea.addEventListener("input", function () {
+                let texto = this.value.trim();
+                let totalCaracteres = texto.length;
+                let totalPalabras = texto.split(/\s+/).filter(word => word.length > 0).length;
+    
+                // Obtener contador y errorMensaje aquí dentro del listener
+                // Esto asegura que se busquen los elementos solo cuando hay interacción
+                let contador = document.getElementById(contadorId);
+                let errorMensaje = document.getElementById(errorId);
+    
+    
+                if (maximo === 150) {
+                    if (contador) contador.textContent = `Máximo ${maximo} caracteres. Caracteres actuales: ${totalCaracteres}`; // Añadir verificación de contador
+                    if (totalCaracteres > maximo) {
+                         if (errorMensaje) { // Añadir verificación de errorMensaje
+                            errorMensaje.style.display = "block";
+                            errorMensaje.textContent = `No puedes escribir más de ${maximo} caracteres.`;
+                         }
+                        this.value = texto.slice(0, maximo); // Limitar a maximo
+                    } else {
+                        if (errorMensaje) errorMensaje.style.display = "none"; // Añadir verificación de errorMensaje
+                    }
+                } else if (maximo === 400) {
+                    if (contador) contador.textContent = `Máximo ${maximo} palabras. Palabras actuales: ${totalPalabras}`; // Añadir verificación de contador
+                    if (totalPalabras > maximo) {
+                        if (errorMensaje) { // Añadir verificación de errorMensaje
+                            errorMensaje.style.display = "block";
+                            errorMensaje.textContent = `No puedes escribir más de ${maximo} palabras.`;
+                        }
+                        this.value = texto.split(/\s+/).filter(word => word.length > 0).slice(0, maximo).join(" "); // Limitar a maximo
+                    } else if (totalPalabras < minimo) {
+                         if (errorMensaje) { // Añadir verificación de errorMensaje
+                            errorMensaje.style.display = "block";
+                            errorMensaje.textContent = `Debes escribir al menos ${minimo} palabras.`;
+                         }
+                    } else {
+                        if (errorMensaje) errorMensaje.style.display = "none"; // Añadir verificación de errorMensaje
+                    }
                 }
-            } else if (maximo === 400) {
-                contador.textContent = `Máximo ${maximo} palabras. Palabras actuales: ${totalPalabras}`;
-                if (totalPalabras > maximo) {
-                    errorMensaje.style.display = "block";
-                    errorMensaje.textContent = `No puedes escribir más de ${maximo} palabras.`;
-                    this.value = texto.split(/\s+/).filter(word => word.length > 0).slice(0, maximo).join(" "); // Limitar a maximo
-                } else if (totalPalabras < minimo) {
-                    errorMensaje.style.display = "block";
-                    errorMensaje.textContent = `Debes escribir al menos ${minimo} palabras.`;
-                } else {
-                    errorMensaje.style.display = "none";
-                }
-            }
-        });
+            });
+        } else {
+            console.error(`validaciones.js: Elemento con ID "${textareaId}" no encontrado para añadir listener.`);
+        }
     }
 
     // Validación de textarea de sección 1 (referencias domicilio)

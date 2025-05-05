@@ -1,0 +1,110 @@
+.home-section {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    padding: 20px;
+    flex-direction: column;
+}
+
+.home-header{
+    margin-bottom: 2rem;
+    text-align: center;
+
+    .home-title{
+        font-family: 'Cocogoose', sans-serif;
+        color: #010066;
+    }
+
+    .home-subtitle{
+        font-family: 'Louis George Café', sans-serif;
+    }
+}
+
+
+.tabs-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+
+    .tabs-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        width: 100%;
+        max-width: 400px;
+        gap: 0.5rem;
+        background-color: #e7e7e7;
+        border-radius: 8px; 
+        padding: 8px;
+
+        .tabs-trigger {
+            padding: 10px 20px;
+            font-family: 'Cocogoose', sans-serif;
+            font-size: 1rem;
+            text-align: center;
+            border: none;
+            border-radius: 6px;
+            background-color: transparent;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &.active{
+                background-color: white;
+                color: #010066;
+                font-weight: bold;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+        }
+    }
+}
+
+.tabs-trigger:hover:not(.active) {
+    background-color: white;
+    color: #010066;
+}
+
+
+.btn-continue{
+    font-family: 'Cocogoose', sans-serif;
+    background-color: #010066;
+    font-weight: 600;
+    border: none;
+    color: white;
+    padding: 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    width: 100%;
+    border-radius: 15px;
+
+    &:hover{
+        background-color:  #5FB8E4;
+        color: #010066;
+        transition: 0.3s;
+        font-weight: 600;
+    }
+}
+
+.btn-register{
+    font-family: 'Cocogoose', sans-serif;
+    background-color: #010066;
+    font-weight: 600;
+    border: none;
+    color: white;
+    padding: 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    width: 100%;
+    border-radius: 15px;
+
+    &:hover{
+        background-color:  #5FB8E4;
+        color: #010066;
+        transition: 0.3s;
+        font-weight: 600;
+    }
+}

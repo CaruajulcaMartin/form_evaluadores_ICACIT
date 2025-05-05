@@ -1,10 +1,17 @@
+<?php
+/*
+ * Copyright 2025 ICACIT
+ * Analista programador - Caruajulca Rimarachin Luis M.
+*/
+?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>ICACIT | Formulario de Inscripción - Evaluador</title>
+  <title>ICACIT | Formulario de aplicación</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="<?php echo URL; ?>assets/logo.png">
 
@@ -12,6 +19,11 @@
   <link rel="stylesheet" href="<?php echo URL; ?>css/style.css">
   <link rel="stylesheet" href="<?php echo URL; ?>css/preVisualizar.css">
   <link rel="stylesheet" href="<?php echo URL; ?>css/selectCodigoPhone.css">
+  <!-- nuevos css -->
+  <link rel="stylesheet" href="<?php echo URL; ?>css/style_login.css">
+  <link rel="stylesheet" href="<?php echo URL; ?>css/style-header.css">
+  <link rel="stylesheet" href="<?php echo URL; ?>css/style-main.css">
+  <link rel="stylesheet" href="<?php echo URL; ?>css/style_main-formulario.css">
 
   <!-- Librería Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -38,6 +50,10 @@
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  
   <style>
     .select2-container .select2-selection--single {
       height: 38px;

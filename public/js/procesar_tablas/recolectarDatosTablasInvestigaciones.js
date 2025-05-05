@@ -1,54 +1,66 @@
-/*
-$(document).ready(function () {
-    $(document).on("submit","#formularioEvaluador", function (event) { //? evento para enviar el formulario
-        event.preventDefault();
 
-        // Crear un objeto FormData para tabla de Información Sobre Investigación
-        const formData = new FormData(this);
+function recolectarDatosTablasInvestigaciones(formData, existeRegistro) {
+    const esActualizacion = existeRegistro;  
 
-        }
-        });
+    formData.append('esActualizacion', esActualizacion);
 
+    const nuevosDatos = {
+        Investigaciones: [],
+    };
+
+    // Objeto para almacenar IDs eliminados
+    const eliminados = {
+        Investigaciones: [],
+    };
+
+    if (esActualizacion) {
+        console.log("Identificando registros eliminados...");
         
-        // Enviar los datos al servidor mediante AJAX
-        $.ajax({
-            url: url + "Home/enviarFormulario/",
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-
-                //? falta agregar codigo para que resete el formulario
-                //alert(response);
-                
-                if (response === "éxito") {
-                    alert("Formulario enviado con éxito 130");
-                } else {
-                    alert("error al enviar el formulario 131");
-                    
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error(xhr.responseText);
-                alert("Ocurrió un error al enviar el formulario. Por favor, inténtalo de nuevo.");
-            }
-        });
+        // Para formación académica
+        const idsInvestigacionesOriginales = registrosTablas.investigaciones.map(item => item.id);
+        const idsInvestigacionesActuales = $("#tablaInvestigaciones tr[data-id]").map((i, el) => {
+            const id = $(el).data('id');
+            return (id && !id.toString().startsWith('new_')) ? id : null;
+        }).get().filter(Boolean);
         
-    });
-});
-*/
+        eliminados.Investigaciones = idsInvestigacionesOriginales.filter(id => !idsInvestigacionesActuales.includes(id));
+        console.log("Formación académica eliminada:", eliminados.Investigaciones);
+    }
 
-function recolectarDatosTablasInvestigaciones(formData) {
     // **Recolectar datos de la tabla dinámica de investigaciones
-    $("#tablaInvestigaciones tr").each(function (index) {
+    $("#tablaInvestigaciones tr").each(function (index){
         const row = $(this);
-        if (row.find("td").length > 0) {
-            formData.append(`investigaciones[${index}][fechaPublicacion]`, row.find("td:eq(0)").text());
-            formData.append(`investigaciones[${index}][revistaCongreso]`, row.find("td:eq(1)").text());
-            formData.append(`investigaciones[${index}][baseDatos]`, row.find("td:eq(2)").text());
-            formData.append(`investigaciones[${index}][nombreInvestigacion]`, row.find("td:eq(3)").text());
-            formData.append(`investigaciones[${index}][autores]`, row.find("td:eq(4)").text());
+        const rowId = row.attr('data-id');
+
+        if (!rowId || rowId.toString().startsWith('new_')) {
+            console.log(`Recolectando datos de la fila ${index + 1} de la tabla de investigaciones...`);
+            const data = {
+                fechaPublicacion: row.find("td:eq(0)").text(),
+                revistaCongreso: row.find("td:eq(1)").text(),
+                baseDatos: row.find("td:eq(2)").text(),
+                nombreInvestigacion: row.find("td:eq(3)").text(),
+                autores: row.find("td:eq(4)").text(),
+                
+            }
+
+            for (const key in data) {
+                formData.append(`Investigaciones[${index}][${key}]`, data[key]);
+            }
         }
+    });
+
+    if (esActualizacion) {
+        formData.append('eliminados', JSON.stringify(eliminados));
+        console.log("Datos de eliminados preparados:", eliminados);
+    }
+
+    formData.append('nuevos', JSON.stringify(nuevosDatos));
+    console.log("Datos nuevos preparados:", nuevosDatos);
+
+
+    console.log("Datos a enviar:", {
+        eliminados: eliminados,
+        nuevos: nuevosDatos
     });
 }
+
