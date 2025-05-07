@@ -2,6 +2,8 @@
 
 namespace Mini\Controller;
 
+use Exception;
+
 use Mini\Model\Persona;
 use Mini\Model\Home;
 
@@ -10,47 +12,74 @@ class PersonaController
     //funcion de inicio de sesion
     public function login()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = isset($_POST['email']) ? trim($_POST['email']) : null;
-            $password = isset($_POST['password']) ? trim($_POST['password']) : null;
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        
+        // Establecer headers primero y suprimir salidas no deseadas
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
 
-            if (empty($email) || empty($password)) {
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'Por favor, completa todos los campos.'
-                ]);
-                return;
-            }
+        ob_start(); // Iniciar buffer de salida
 
-            $personaModel = new Persona();
-            $user = $personaModel->verifyCredentials($email, $password);
-
-            if ($user) {
+        try {
+            if (!isset($_SESSION)) {
                 session_start();
-                $_SESSION['user_id'] = $user['id']; // Guarda el ID del usuario en la sesión
-                //$_SESSION['formulario_enviado'] = $user->formulario_enviado;
-                // Verificar estado del formulario
-
-                $homeModel = new Home();
-                $formularioEnviado = $homeModel->verificarEnvio($user['id']);
-                $_SESSION['formulario_enviado'] = $formularioEnviado;
-
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => 'Inicio de sesión exitoso.',
-                    'formulario_enviado' => $formularioEnviado
-                ]);
-            } else {
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'Correo o contraseña incorrectos.'
-                ]);
             }
-        } else {
+
+            $response = ['status' => 'error', 'message' => ''];
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $email = isset($_POST['email']) ? trim($_POST['email']) : null;
+                $password = isset($_POST['password']) ? trim($_POST['password']) : null;
+                $verify = isset($_POST["verify"]) ? $_POST["verify"] : "";
+
+                if (empty($email) || empty($password)) {
+                    $response['message'] = 'Por favor, completa todos los campos.';
+                    ob_end_clean(); // Limpiar buffer
+                    echo json_encode($response);
+                    exit;
+                }
+
+                // Verificar CAPTCHA primero
+                if (!isset($_SESSION["captcha"]) || $verify != $_SESSION["captcha"]) {
+                    $response['message'] = 'Captcha incorrecto o expirado.';
+                    ob_end_clean();
+                    echo json_encode($response);
+                    exit;
+                }
+
+                $personaModel = new Persona();
+                $user = $personaModel->verifyCredentials($email, $password);
+
+                if ($user) {
+                    session_start();
+                    $_SESSION['user_id'] = $user['id'];
+
+                    $homeModel = new Home();
+                    $formularioEnviado = $homeModel->verificarEnvio($user['id']);
+                    $_SESSION['formulario_enviado'] = $formularioEnviado;
+
+                    $response['status'] = 'success';
+                    $response['message'] = 'Inicio de sesión exitoso.';
+                    $response['formulario_enviado'] = $formularioEnviado;
+                } else {
+                    $response['message'] = 'Correo o contraseña incorrectos.';
+                }
+            } else {
+                $response['message'] = 'Método no permitido.';
+            }
+
+            ob_end_clean();
+            echo json_encode($response);
+            exit;
+        } catch (Exception $e) {
+            ob_end_clean();
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Método no permitido.'
+                'message' => 'Error interno del servidor: ' . $e->getMessage()
             ]);
+            exit;
         }
     }
 
@@ -107,4 +136,6 @@ class PersonaController
         }
     }
 
+    // funcion de recuperar contraseña
+    // public function recuperarPassword(){}
 }

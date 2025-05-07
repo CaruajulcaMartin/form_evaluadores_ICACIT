@@ -568,8 +568,17 @@ class FormularioController extends Model
     //! Actualizar la seccion 3
     public function actualizarSeccion3()
     {
-        header('Content-Type: application/json');
-
+        //cambios 
+        //inicio
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        
+        // Establecer headers primero y suprimir salidas no deseadas
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
+        //fin
+        
         try {
             session_start();
             $userId = $_SESSION['user_id'];
@@ -665,7 +674,7 @@ class FormularioController extends Model
 
                         $data = [
                             'postulante_id' => $postulanteId,
-                            'tipo_formacion' => $formacion['tipo_formacion'] ,
+                            'tipo_formacion' => $formacion['tipo_formacion'] ?? null,
                             'pais' => $formacion['pais'] ?? null,
                             'ano_graduacion' => $formacion['ano_graduacion'] ?? null,
                             'universidad' => $formacion['universidad'] ?? null,
@@ -765,6 +774,7 @@ class FormularioController extends Model
                 "trace" => $e->getTraceAsString()
             ]);
         }
+        exit;
     }
 
 

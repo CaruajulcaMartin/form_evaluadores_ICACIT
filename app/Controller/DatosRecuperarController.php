@@ -640,13 +640,12 @@ class DatosRecuperarController
                 'seccion8' => $dataRecoveryModel->getSeccion8Data($postulanteId),
             ];
 
-            // Registrar cada sección individualmente
-            foreach ($secciones as $nombre => $datos) {
-                error_log("Datos de {$nombre}: " . print_r($datos, true));
+            // Procesar archivos y generar URLs completas
+            $this->procesarArchivosSeccion($seccion1Data, 'seccion1');
 
-                // Verificar si la sección está vacía
-                if (empty($datos)) {
-                    error_log("ADVERTENCIA: La sección {$nombre} está vacía o no tiene datos");
+            foreach ($secciones as $seccionKey => $seccionData) {
+                if ($seccionData) {
+                    $this->procesarArchivosSeccion($seccionData, $seccionKey);
                 }
             }
 
@@ -658,5 +657,110 @@ class DatosRecuperarController
             echo json_encode(['success' => false, 'message' => 'Error en el servidor: ' . $e->getMessage()]);
         }
         exit;
+    }
+
+    private function procesarArchivosSeccion(&$seccionData, $seccionKey) {
+        $basePaths = [
+            'fotos_perfil' => 'view/admin/upload/fotos_perfil/',
+            'firmas' => 'app/view/admin/upload/firmas/',
+            'documentos_identidad' => 'app/view/admin/upload/documentos_identidad/',
+            'formacion_academica' => 'app/view/admin/upload/formacion_academica/',
+            'experiencia_laboral' => 'app/view/admin/upload/experiencia_laboral/',
+            'experiencia_docente' => 'app/view/admin/upload/experiencia_laboral/experiencia_docente/'
+        ];
+    
+        // Procesar foto de perfil (Sección 1)
+        if ($seccionKey === 'seccion1' && isset($seccionData['foto_perfil'])) {
+            $seccionData['foto_perfil_url'] = $this->generarUrlArchivo(
+                $basePaths['fotos_perfil'], 
+                $seccionData['foto_perfil']
+            );
+        }
+    
+        // Procesar firma digital (Sección 8)
+        if ($seccionKey === 'seccion8' && isset($seccionData['firma_digital'])) {
+            $seccionData['firma_digital_url'] = $this->generarUrlArchivo(
+                $basePaths['firmas'], 
+                $seccionData['firma_digital']
+            );
+        }
+    
+        // Procesar PDFs de documentos
+        $pdfFields = [
+            'pdf_documento_identidad' => $basePaths['documentos_identidad'],
+            'ruta_archivo_formacion' => $basePaths['formacion_academica'],
+            'ruta_archivo_experiencia' => $basePaths['experiencia_laboral'],
+            'ruta_archivo_docencia' => $basePaths['experiencia_docente']
+        ];
+    
+        foreach ($pdfFields as $field => $path) {
+            if (isset($seccionData[$field])) {
+                $seccionData[$field . '_url'] = $this->generarUrlArchivo($path, $seccionData[$field]);
+            }
+        }
+    
+        // Procesar arrays de datos que puedan contener archivos
+        if (is_array($seccionData)) {
+            foreach ($seccionData as $key => $value) {
+                if (is_array($value)) {
+                    foreach ($value as $subKey => $subValue) {
+                        if (is_array($subValue)) {
+                            foreach ($subValue as $item) {
+                                if (isset($item['ruta_archivo'])) {
+                                    $tipo = $this->determinarTipoArchivo($key, $subKey);
+                                    if ($tipo && isset($basePaths[$tipo])) {
+                                        $item['ruta_archivo_url'] = $this->generarUrlArchivo(
+                                            $basePaths[$tipo], 
+                                            $item['ruta_archivo']
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private function generarUrlArchivo($relativePath, $filename) {
+        if (empty($filename)) {
+            return null;
+        }
+    
+        // Verificar si ya es una URL completa o un data URI
+        if (filter_var($filename, FILTER_VALIDATE_URL) || strpos($filename, 'data:') === 0) {
+            return $filename;
+        }
+    
+        // Verificar si el archivo existe físicamente
+        $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/' . trim($relativePath, '/') . '/' . $filename;
+        if (!file_exists($fullPath)) {
+            error_log("Archivo no encontrado: $fullPath");
+            return null;
+        }
+    
+        // Generar URL completa
+        $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . 
+                    "://$_SERVER[HTTP_HOST]";
+        
+        return $baseUrl . '/' . trim($relativePath, '/') . '/' . rawurlencode($filename);
+    }
+    
+    private function determinarTipoArchivo($seccion, $subseccion) {
+        $map = [
+            'formacion_academica' => 'formacion_academica',
+            'idiomas' => 'formacion_academica',
+            'cursos_seminarios' => 'formacion_academica',
+            'experiencia_profesional' => 'experiencia_laboral',
+            'experiencia_docente' => 'experiencia_docente',
+            'experiencia_comite' => 'experiencia_laboral',
+            'experiencia_par' => 'experiencia_laboral',
+            'membresias' => 'experiencia_laboral',
+            'publicaciones' => 'formacion_academica',
+            'premios_reconocimientos' => 'formacion_academica'
+        ];
+    
+        return $map[$subseccion] ?? $map[$seccion] ?? null;
     }
 }

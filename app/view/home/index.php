@@ -24,9 +24,29 @@
         <div class="mb-3">
           <div class="d-flex justify-content-between align-items-center">
             <label for="password" class="form-label fw-bold home-label">Contraseña</label>
-            <a href="#" class="text-decoration-none text-primary small home-forgot-password">¿Olvidaste tu contraseña?</a>
+            <button type="button" name="recuperar" class="btn btn-link recuperar" data-toggle="modal" data-container="body" style="text-decoration: none;">¿Olvido su contraseña?</button>
           </div>
           <input id="password" type="password" class="form-control home-input" required>
+        </div>
+
+        <!-- campo de captcha -->
+        <div>
+          <center>
+            <div class="captcha">
+              <img alt="Verification" class="captcha-img" height="68" src="<?php echo URL; ?>tools/captcha/captcha.php" width="200">
+              <i class="change-captcha btn btn-info btn-sm" title="Cambiar imagen">
+                <span class="fa fa-fw fa-refresh">
+                </span>
+              </i>
+            </div>
+          </center>
+        </div>
+
+        <div class="mb-3">
+          <label for="captcha" class="form-label fw-bold home-label">Captcha</label>
+          <input class="form-control autocomplete-off" id="verify" name="verify" placeholder="Código Captcha" required type="txt">
+        </div>
+        <div id="message">
         </div>
 
         <button type="submit" class="btn-continue">Continuar</button>
@@ -80,6 +100,40 @@
     </div>
   </div>
 </section>
+
+<!-- modal de recuperar contraseña -->
+<div class="modal fade" id="modal-recover" tabindex="-1" aria-labelledby="modal-recover-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" id="form_recover" enctype="multipart/form-data">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-recover-label">Recuperar Contraseña</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <p class="login-box-msg">
+              ¿Olvidaste tu contraseña? Aquí puedes recuperarla fácilmente ingresando tu correo electrónico registrado.
+            </p>
+            <div class="input-group">
+              <input type="email" id="e_recuperar" name="e_recuperar" class="form-control" placeholder="Email" required>
+              <span class="input-group-text">
+                <i class="fa fa-envelope"></i>
+              </span>
+            </div>
+          </div>
+          <div class="d-grid">
+            <button type="submit" name="action" id="action" class="btn btn-success">Enviar Solicitud</button>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <input type="hidden" name="operation" id="operation">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
   // Alternar entre las secciones de login y registro
