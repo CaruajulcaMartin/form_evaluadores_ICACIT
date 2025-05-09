@@ -17,7 +17,7 @@ $(document).ready(function() {
     };
 
     function cambiarBotonGuardarActualizar() {
-        console.log("Cambiando botón a modo actualización");
+        //console.log("Cambiando botón a modo actualización");
         $(".btn-guardar")
             .removeClass("btn-success")
             .addClass("btn-warning")
@@ -26,7 +26,7 @@ $(document).ready(function() {
     }
 
     function configurarEventosCambios() {
-        console.log("Configurando eventos para detectar cambios");
+        //console.log("Configurando eventos para detectar cambios");
         $("input, select, textarea").on("change input", function() {
             verificarCambios();
         });
@@ -99,7 +99,7 @@ $(document).ready(function() {
             formData.append('userId', userId);
             formData.append('esActualizacion', esActualizacion);
             
-            console.log("Preparando envío de datos...");
+            //console.log("Preparando envío de datos...");
             recolectarDatosTablasPremios(formData, existeRegistro);
 
             $.ajax({
@@ -123,18 +123,37 @@ $(document).ready(function() {
                         
                         if (responseData.status === 'success') {
                             // alert(responseData.message);
-                            location.href = URL + "Admin/HomeFormulario";
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Guardado!',
+                                text: responseData.message || (esActualizacion ? 'Datos actualizados correctamente.' : 'Datos guardados correctamente.'),
+                                confirmButtonText: 'Aceptar',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = URL + "Admin/HomeFormulario";
+                                }
+                            });
                         } else {
                             throw new Error(responseData.message || "Error desconocido");
                         }
                     } catch (e) {
                         console.error("Error al procesar respuesta:", e);
-                        alert("Error: " + e.message);
+                        //alert("Error: " + e.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: "Error al procesar la respuesta del servidor.",
+                        });
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en AJAX:", status, error);
-                    alert("Error en la solicitud. Ver consola para detalles.");
+                    //alert("Error en la solicitud. Ver consola para detalles.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "Error en la solicitud. Ver consola para detalles.",
+                    });
                 },
                 complete: () => {
                     $(this).prop("disabled", false)
@@ -146,7 +165,7 @@ $(document).ready(function() {
 
     // Función principal para cargar datos
     function cargarDatosIniciales() {
-        console.log("Cargando datos iniciales...");
+        //console.log("Cargando datos iniciales...");
         
         return new Promise((resolve) => {
             $.ajax({
@@ -162,7 +181,7 @@ $(document).ready(function() {
                     tablaBody.empty();
 
                     if (existeRegistro) {
-                        console.log("Existen registros previos, cargando datos...");
+                        //console.log("Existen registros previos, cargando datos...");
                         registrosTablas.premios = data || [];
 
                         $.each(data, function(index, registro) {

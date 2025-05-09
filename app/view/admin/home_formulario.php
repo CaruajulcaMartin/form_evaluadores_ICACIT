@@ -325,7 +325,7 @@ for ($i = 1; $i <= 9; $i++) {
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary" id="confirmarEnvio">Confirmar Envío</button>
-                <!-- <button type="button" class="btn btn-success" id="downloadPDF">Descargar PDF</button> -->
+                <button type="button" class="btn btn-success" id="downloadPDF">Descargar PDF</button>
             </div>
         </div>
     </div>

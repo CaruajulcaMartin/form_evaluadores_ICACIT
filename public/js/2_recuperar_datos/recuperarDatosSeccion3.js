@@ -44,7 +44,7 @@ $(document).ready(function() {
 
     // Función para cargar datos iniciales
     function cargarDatosIniciales() {
-        console.log("Cargando datos iniciales...");
+       // console.log("Cargando datos iniciales...");
         existeRegistro = false; // Inicializa correctamente
 
         let promesas = [
@@ -57,7 +57,7 @@ $(document).ready(function() {
 
         Promise.all(promesas)
         .then(resultados => { // 'resultados' será un array de booleanos (true si hay datos, false si no)
-            console.log("Resultados de la carga inicial:", resultados);
+            //console.log("Resultados de la carga inicial:", resultados);
             existeRegistro = resultados.some(resultado => resultado);
             cambiarBotonGuardarActualizar();
             verificarCambios();
@@ -70,14 +70,14 @@ $(document).ready(function() {
     function cambiarBotonGuardarActualizar() {
         const btnGuardar = $(".btn-guardar");
         if (existeRegistro || verificarSiHayDatosEnFormulario()) {
-            console.log("Cambiando botón a modo actualizar");
+            //console.log("Cambiando botón a modo actualizar");
             btnGuardar
                 .removeClass("btn-success")
                 .addClass("btn-warning")
                 .html('<i class="fa-solid fa-rotate"></i> Actualizar Cambios')
                 .attr("id", "btnActualizar");
         } else {
-            console.log("Cambiando botón a modo guardar");
+            //console.log("Cambiando botón a modo guardar");
             btnGuardar
                 .removeClass("btn-warning")
                 .addClass("btn-success")
@@ -88,7 +88,7 @@ $(document).ready(function() {
     }
 
     function configurarEventosCambios() {
-        console.log("Configurando eventos para detectar cambios");
+        //console.log("Configurando eventos para detectar cambios");
         $("input, select, textarea").on("change input", function() {
             verificarCambios();
         });
@@ -146,7 +146,7 @@ $(document).ready(function() {
     }
 
     function configurarModalConfirmacion() {
-        console.log("Configurando modal de confirmación");
+        //console.log("Configurando modal de confirmación");
 
         $(document).on("click", ".btn-guardar, #btnActualizar", function() {
             const esActualizacion = $(this).attr("id") === "btnActualizar";
@@ -154,7 +154,7 @@ $(document).ready(function() {
                 "¿Estás seguro de que deseas actualizar los datos de esta sección?" : 
                 "¿Estás seguro de que deseas guardar los datos por primera vez?";
             
-            console.log(`Mostrando modal de confirmación para ${esActualizacion ? 'actualización' : 'creación'}`);
+            //console.log(`Mostrando modal de confirmación para ${esActualizacion ? 'actualización' : 'creación'}`);
             
             $("#modalMessage").text(mensaje);
             $("#confirmarEnvioBtn")
@@ -163,7 +163,7 @@ $(document).ready(function() {
                 
             // Mostrar datos que se enviarán
             if (esActualizacion) {
-                // obtenerDatosFormulario()
+                //obtenerDatosFormulario()
                 // console.log("Datos que se enviarán para actualización:", obtenerDatosFormulario());
             }
         });
@@ -171,7 +171,12 @@ $(document).ready(function() {
         $("#confirmarEnvioBtn").click(function() {
             
             if (!verificarTablasConDatos()) {
-                alert("Debe agregar al menos un registro en alguna de las tablas.");
+                //alert("Debe agregar al menos un registro en alguna de las tablas.");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Advertencia',
+                    text: 'Debe agregar al menos un registro en alguna de las tablas.',
+                });
                 $(this).prop("disabled", false);
                 return;
             }
@@ -182,15 +187,15 @@ $(document).ready(function() {
             formData.append('userId', userId);
             formData.append('esActualizacion', esActualizacion);
             
-            console.log("Preparando envío de datos...");
+            //console.log("Preparando envío de datos...");
 
             recolectarDatosTablas(formData, existeRegistro);
 
-            console.log("--- Inspeccionando FormData ---");
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ': ', pair[1]); 
-            }
-            console.log("-----------------------------");
+            // console.log("--- Inspeccionando FormData ---");
+            // for (let pair of formData.entries()) {
+            //     console.log(pair[0] + ': ', pair[1]); 
+            // }
+            // console.log("-----------------------------");
 
             $.ajax({
                 url: esActualizacion ? 
@@ -206,29 +211,48 @@ $(document).ready(function() {
                         .html('<span class="spinner-border spinner-border-sm"></span> Procesando...');
                 },
                 success: function(response) {
-                    console.log("Respuesta del servidor:", response);
+                    //console.log("Respuesta del servidor:", response);
                     try {
                         const responseData = typeof response === 'string' ? 
                             JSON.parse(response) : response;
                         
                         if (responseData.status === 'success') {
-                            alert(responseData.message);
-                            if (responseData.debug) {
-                                console.log("Debug del servidor:", responseData.debug);
-                            }
-                            location.href = URL + "Admin/HomeFormulario";
+                            // alert(responseData.message);
+                            // if (responseData.debug) {
+                            //     console.log("Debug del servidor:", responseData.debug);
+                            // }
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Guardado!',
+                                text: responseData.message || (esActualizacion ? 'Datos actualizados correctamente.' : 'Datos guardados correctamente.'),
+                                confirmButtonText: 'Aceptar',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = URL + "Admin/HomeFormulario";
+                                }
+                            });
                         } else {
                             throw new Error(responseData.message || "Error desconocido");
                         }
                     } catch (e) {
                         console.error("Error al procesar respuesta:", e);
-                        alert("Error: " + e.message);
+                        //alert("Error: " + e.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: "Error al procesar la respuesta del servidor.",
+                        });
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en AJAX:", status, error);
                     console.error("Respuesta del servidor:", xhr.responseText);
-                    alert("Error en la solicitud. Ver consola para detalles.");
+                    //alert("Error en la solicitud. Ver consola para detalles.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "Error en la solicitud. Ver consola para detalles.",
+                    });
                 },
                 complete: () => {
                     $(this).prop("disabled", false)
@@ -261,7 +285,7 @@ function recuperarDatosSeccion3_formacion() {
             data: { userId: userId },
             dataType: "json",
             success: function(data) {
-                console.log("Datos recibidos del servidor de formación:", data);
+                //console.log("Datos recibidos del servidor de formación:", data);
                 var tablaBody = $("#tablaFormacion");
                 tablaBody.empty();
     
@@ -270,7 +294,7 @@ function recuperarDatosSeccion3_formacion() {
                     registrosTablas.formacion = data;
     
                     $.each(data, function(index, registro) {
-                        console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.tipo_formacion}`);
+                        //console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.tipo_formacion}`);
                         var tienePDF = registro.pdf_formacion_academica ? true : false;
                         var fila = `
                             <tr data-id="${registro.id || 'new'}">
@@ -304,8 +328,8 @@ function recuperarDatosSeccion3_formacion() {
                 }
             },
             error: function(xhr, status, error) {
-                console.error("Error al cargar los datos:", error);
-                alert("Error al cargar los datos. Ver consola para más detalles.");
+                console.error("Error al cargar los datos de formación:", error);
+                //alert("Error al cargar los datos. Ver consola para más detalles.");
             }
         });
     })
@@ -327,7 +351,7 @@ function recuperarDatosSeccion3_idiomas() {
             data: { userId: userId },
             dataType: "json",
             success: function(data) {
-                console.log("Datos recibidos del servidor de idiomas:", data);
+                //console.log("Datos recibidos del servidor de idiomas:", data);
                 var tablaBody = $("#tablaIdiomas");
                 tablaBody.empty();
     
@@ -336,7 +360,7 @@ function recuperarDatosSeccion3_idiomas() {
     
                     // Recorre cada registro y crea una fila en la tabla
                     $.each(data, function(index, registro) {
-                        console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.idioma}`);
+                        //console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.idioma}`);
                         var fila = `
                             <tr data-id="${registro.id || 'new'}">
                                 <td>${registro.idioma || 'N/A'}</td>
@@ -358,8 +382,8 @@ function recuperarDatosSeccion3_idiomas() {
                 }
             },
             error: function(xhr, status, error) {
-                console.error("Error al cargar los datos:", error);
-                alert("Error al cargar los datos. Ver consola para más detalles.");
+                console.error("Error al cargar los datos de idiomas:", error);
+                //alert("Error al cargar los datos. Ver consola para más detalles.");
             }
         });
     })
@@ -381,7 +405,7 @@ function recuperarDatosSeccion3_cursosCampoProfesional() {
             data: { userId: userId },
             dataType: "json",
             success: function(data) {
-                console.log("Datos recibidos del servidor campo profesional:", data);
+                //console.log("Datos recibidos del servidor campo profesional:", data);
                 var tablaBody = $("#tablaCursosAmbitoProfesional");
                 tablaBody.empty();
     
@@ -390,7 +414,7 @@ function recuperarDatosSeccion3_cursosCampoProfesional() {
     
                     // Recorre cada registro y crea una fila en la tabla
                     $.each(data, function(index, registro) {
-                        console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.nombre_curso_seminario}`);
+                        //console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.nombre_curso_seminario}`);
                         var fila = `
                             <tr data-id="${registro.id || 'new'}">
                                 <td>${registro.ano || 'N/A'}</td>
@@ -413,8 +437,8 @@ function recuperarDatosSeccion3_cursosCampoProfesional() {
                 }
             },
             error: function(xhr, status, error) {
-                console.error("Error al cargar los datos:", error);
-                alert("Error al cargar los datos. Ver consola para más detalles.");
+                console.error("Error al cargar los datos de campo profesional:", error);
+                //alert("Error al cargar los datos. Ver consola para más detalles.");
             }
         });
     })
@@ -436,7 +460,7 @@ function recuperarDatosSeccion3_cursosCampoAcademico() {
             data: { userId: userId },
             dataType: "json",
             success: function(data) {
-                console.log("Datos recibidos del servidor académico:", data);
+                //console.log("Datos recibidos del servidor académico:", data);
                 var tablaBody = $("#tablaCursosAmbitoAcademico");
                 tablaBody.empty();
     
@@ -446,7 +470,7 @@ function recuperarDatosSeccion3_cursosCampoAcademico() {
     
                     // Recorre cada registro y crea una fila en la tabla
                     $.each(data, function(index, registro) {
-                        console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.nombre_curso_seminario}`);
+                        //console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.nombre_curso_seminario}`);
                         var fila = `
                             <tr data-id="${registro.id || 'new'}">
                                 <td>${registro.ano || 'N/A'}</td>
@@ -469,8 +493,8 @@ function recuperarDatosSeccion3_cursosCampoAcademico() {
                 }
             },
             error: function(xhr, status, error) {
-                console.error("Error al cargar los datos:", error);
-                alert("Error al cargar los datos. Ver consola para más detalles.");
+                console.error("Error al cargar los datos de campo académico:", error);
+                //alert("Error al cargar los datos. Ver consola para más detalles.");
             }
         });
     })
@@ -492,7 +516,7 @@ function recuperarDatosSeccion3_cursosCampoEvaluacion() {
             data: { userId: userId },
             dataType: "json",
             success: function(data) {
-                console.log("Datos recibidos del servidor campo de evaluación:", data);
+                //console.log("Datos recibidos del servidor campo de evaluación:", data);
                 var tablaBody = $("#tablaCursos");
                 tablaBody.empty();
     
@@ -501,7 +525,7 @@ function recuperarDatosSeccion3_cursosCampoEvaluacion() {
     
                     // Recorre cada registro y crea una fila en la tabla
                     $.each(data, function(index, registro) {
-                        console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.nombre_curso_seminario}`);
+                        //console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.nombre_curso_seminario}`);
                         var fila = `
                             <tr data-id="${registro.id || 'new'}">
                                 <td>${registro.ano || 'N/A'}</td>
@@ -525,12 +549,10 @@ function recuperarDatosSeccion3_cursosCampoEvaluacion() {
                 }
             },
             error: function(xhr, status, error) {
-                console.error("Error al cargar los datos:", error);
-                alert("Error al cargar los datos. Ver consola para más detalles.");
+                console.error("Error al cargar los datos de campo de evaluación:", error);
+                //alert("Error al cargar los datos. Ver consola para más detalles.");
             }
         });
     })
-
-    
 }
 

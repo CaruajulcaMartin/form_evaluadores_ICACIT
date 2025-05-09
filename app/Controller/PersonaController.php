@@ -9,6 +9,7 @@ use Mini\Model\Home;
 
 class PersonaController
 {
+
     //funcion de inicio de sesion
     public function login()
     {
@@ -53,6 +54,16 @@ class PersonaController
                 $user = $personaModel->verifyCredentials($email, $password);
 
                 if ($user) {
+                    // Verificar el estado del usuario
+                    $estado = $personaModel->verificarEstado($email);
+
+                    if ($estado === 'Inactivo') {
+                        $response['message'] = 'Cuenta inactiva';
+                        ob_end_clean();
+                        echo json_encode($response);
+                        exit;
+                    }
+
                     session_start();
                     $_SESSION['user_id'] = $user['id'];
 

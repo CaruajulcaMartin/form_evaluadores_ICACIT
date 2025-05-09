@@ -3,11 +3,28 @@
 namespace Mini\Model;
 
 use Mini\Core\Model;
+use PDO;
 
 use Exception;
 
 class Persona extends Model
 {
+
+    //funcion verificar estado del usuario
+    public function verificarEstado($email){
+        $sql = "SELECT estado FROM usuarios WHERE email = :email";
+        $query = $this->db->prepare($sql);
+        $query->bindParam(':email', $email, PDO::PARAM_STR);
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+
+        if ($result) {
+            return $result['estado'];
+        } else {
+            return false;
+        }
+    }
+
     //funcion de inicio de sesion de usuario
     public function verifyCredentials($email, $password)
     {

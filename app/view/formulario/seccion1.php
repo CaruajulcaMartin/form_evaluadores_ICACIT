@@ -258,9 +258,10 @@
 
 <!-- Recuperar Datos -->
 <script src="<?php echo URL; ?>js/2_recuperar_datos/recuperarDatosSeccion1.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-<!-- por mejorar -->
+<!-- pora mejora -->
 <!-- <style>
     .campo-modificado {
         border-left: 3px solid #ffc107 !important;

@@ -1,20 +1,23 @@
 $(document).ready(function() {
-    console.log("Documento listo - Iniciando script de sección 1");
+    //console.log("Documento listo - Iniciando script de sección 1");
     // alert("Script de sección 1 cargado correctamente");
 
     // Variables globales
     var userId = $("#userId").val();
-    console.log("ID de usuario obtenido:", userId);
+    //console.log("ID de usuario obtenido:", userId);
     
     var datosOriginales = {};
     var existeRegistro = false;
     var hayCambios = false;
 
     if (!userId) {
-        alert("Error: El ID de usuario no está definido.");
+        //alert("Error: El ID de usuario no está definido.");
         console.error("El ID de usuario no está definido");
         return;
     }
+
+    // Cargar los datos del usuario
+    cargarDatosUsuario();
 
     // Cargar datos existentes
     cargarDatosIniciales();
@@ -25,22 +28,50 @@ $(document).ready(function() {
     // Configurar el modal de confirmación
     configurarModalConfirmacion();
 
+    //*funcion para cargar los datos del usuario
+    function cargarDatosUsuario(){
+        $.ajax({
+            url: URL + "DatosRecuperar/getDatosUsuario", // Nueva ruta en el controlador
+            dataType: "json",
+            method: "GET", // O POST, según tu configuración
+            success: function(response) {
+                if (response.status === 'success') {
+                    var userData = response.data;
+                    // Llenar los campos del formulario con los datos del usuario
+                    $("#nombresCompletos").val(userData.nombre);
+                    $("#apellido1").val(userData.apellido_paterno);
+                    $("#apellido2").val(userData.apellido_materno);
+                    $("#correoElectronico").val(userData.email);
+                } else {
+                    console.error("Error al cargar datos del usuario:", response.message);
+                    // Posiblemente mostrar un mensaje al usuario
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud AJAX:", {
+                status: textStatus,
+                error: errorThrown,
+                response: jqXHR.responseText
+                });
+            }
+        });
+    }
+
     // Función para cargar los datos iniciales
     function cargarDatosIniciales() {
-        console.log("Iniciando carga de datos iniciales para userId:", userId);
-        
+        //console.log("Iniciando carga de datos iniciales para userId:", userId);
         $.ajax({
             url: URL + "DatosRecuperar/recuperarDatosSeccion1",
             dataType: "json",
             method: "POST",
             data: { userId: userId },
             success: function(data) {
-                console.log("Datos recibidos del servidor:", data);
+                //console.log("Datos recibidos del servidor:", data);
                 // alert("Datos recibidos del servidor. Ver consola para detalles.");
                 
                 // Verificar si hay datos existentes
                 if (data && data.apellido1) {
-                    console.log("Datos existentes encontrados");
+                    //console.log("Datos existentes encontrados");
                     existeRegistro = true;
                     
                     // Guardar datos originales para comparación
@@ -67,7 +98,7 @@ $(document).ready(function() {
                         referenciaDomicilio: data.referenciaDomicilio || ''
                     };
                     
-                    console.log("Datos originales guardados:", datosOriginales);
+                    //console.log("Datos originales guardados:", datosOriginales);
                     // alert("Datos originales almacenados para comparación");
 
                     // Llenar el formulario con los datos
@@ -86,14 +117,14 @@ $(document).ready(function() {
                     error: errorThrown,
                     response: jqXHR.responseText
                 });
-                alert("Error al cargar datos existentes. Ver consola para detalles.");
+                //alert("Error al cargar datos existentes. Ver consola para detalles.");
             }
         });
     }
 
     // Función para llenar el formulario con datos
     function llenarFormulario(data) {
-        console.log("Llenando formulario con datos:", data);
+        //console.log("Llenando formulario con datos:", data);
         
         // Datos personales
         $("#apellido1").val(data.apellido1);
@@ -104,13 +135,11 @@ $(document).ready(function() {
         $("#nationality").val(data.nationality);
         $("#fechaNacimiento").val(data.fechaNacimiento);
         $("#estadoCivil").val(data.estadoCivil);
-        
         // Datos de contacto
         $("#correoElectronico").val(data.correoElectronico);
         $("#phoneCode").val(data.phoneCode);
         $("#phoneNumber").val(data.celular);
         $("#basic-url").val(data.redProfesional);
-        
         // Datos domiciliarios
         $("#tipoDireccion").val(data.tipoDireccion);
         $("#direccion").val(data.direccion);
@@ -120,209 +149,137 @@ $(document).ready(function() {
         $("#provinciaDatoDominicial").val(data.provinciaDatoDominicial);
         $("#distritoDatoDominicial").val(data.distritoDatoDominicial);
         $("#referenciaDomicilio").val(data.referenciaDomicilio);
-        
-        console.log("Formulario llenado exitosamente");
-        // alert("Formulario poblado con datos existentes");
+        //console.log("Formulario llenado exitosamente");
+        // alert("Formulario poblado exitosamente con datos cargados.");
     }
 
-    // Función para cambiar el botón a modo actualización
-    function cambiarBotonActualizacion() {
-        console.log("Cambiando botón a modo actualización");
-        
-        $(".btn-guardar")
-            .removeClass("btn-success")
-            .addClass("btn-warning")
-            .html('<i class="fa-solid fa-rotate"></i> Actualizar Cambios')
-            .attr("id", "btnActualizar");
-            
-        console.log("Botón actualizado a modo 'Actualizar Cambios'");
-    }
-
-    // Función para configurar eventos de cambios
+    // Función para configurar eventos de cambio en los inputs
     function configurarEventosCambios() {
-        console.log("Configurando eventos para detectar cambios");
-        
-        $("input, select, textarea").on("change input", function() {
-            console.log("Cambio detectado en campo:", $(this).attr("id"));
-            verificarCambios();
+        $('input, select, textarea').on('change', function() {
+            hayCambios = true;
+            $(this).addClass('campo-modificado');
         });
-
-        // Para campos de archivo
-        $("input[type='file']").on("change", function() {
-            console.log("Cambio en archivo:", $(this).attr("id"));
-            verificarCambios();
-        });
-        
-        console.log("Eventos de cambio configurados correctamente");
-    }
-
-    // Función para verificar cambios
-    function verificarCambios() {
-        if (!existeRegistro) {
-            console.log("No hay registro existente, no se verifican cambios");
-            return false;
-        }
-
-        console.log("Verificando cambios en el formulario...");
-        hayCambios = false;
-        
-        // Verificar cambios en campos normales
-        $("input, select, textarea").not("[type='file']").each(function() {
-            const id = $(this).attr("id");
-            if (datosOriginales[id] !== undefined) {
-                const valorOriginal = datosOriginales[id] || '';
-                const valorActual = $(this).val() || '';
-                
-                // Comparación más robusta que ignora espacios en blanco y convierte números
-                if (String(valorOriginal).trim() !== String(valorActual).trim()) {
-                    console.log(`Campo modificado: ${id} - Valor original: '${valorOriginal}' - Nuevo valor: '${valorActual}'`);
-                    hayCambios = true;
-                    $(this).addClass("campo-modificado");
-                } else {
-                    $(this).removeClass("campo-modificado");
-                }
-            }
-        });
-
-        // Verificar cambios en archivos
-        $("input[type='file']").each(function() {
-            if ($(this)[0].files.length > 0) {
-                console.log(`Archivo nuevo seleccionado en: ${$(this).attr("id")}`);
-                hayCambios = true;
-            }
-        });
-
-        // Habilitar/deshabilitar botón según haya cambios
-        if (existeRegistro) {
-            console.log(`Hay cambios detectados: ${hayCambios}`);
-            $("#btnActualizar").prop("disabled", !hayCambios);
-            
-            if (hayCambios) {
-                console.log("Cambios detectados - Botón de actualización habilitado");
-                // alert("Se detectaron cambios en el formulario. Puede proceder a actualizar.");
-            } else {
-                console.log("No hay cambios detectados - Botón de actualización deshabilitado");
-            }
-        }
-
-        return hayCambios;
     }
 
     // Función para configurar el modal de confirmación
     function configurarModalConfirmacion() {
-        console.log("Configurando modal de confirmación");
-        
-        $(document).on("click", ".btn-guardar, #btnActualizar", function() {
-            const esActualizacion = $(this).attr("id") === "btnActualizar";
-            const mensaje = esActualizacion ? 
-                "¿Estás seguro de que deseas actualizar los datos de esta sección?" : 
-                "¿Estás seguro de que deseas guardar los datos por primera vez?";
+        $('#confirmarEnvioModal').on('show.bs.modal', function(e) {
+            if (!existeRegistro) {
+                if (!validarFormularioCompleto()) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Formulario Incompleto',
+                        text: 'Por favor, complete todos los campos obligatorios antes de guardar.',
+                    });
+                    return;
+                }
+            }
             
-            console.log(`Mostrando modal de confirmación para ${esActualizacion ? 'actualización' : 'creación'}`);
+            // Si existe registro o el formulario está completo para el primer registro, procede con el modal
+            var modal = $(this);
+            modal.find('.modal-title').text(existeRegistro ? 'Confirmar Actualización' : 'Confirmar Registro');
+            modal.find('.modal-body').html(
+                (existeRegistro ?
+                    '¿Está seguro de que desea actualizar los datos ingresados?' :
+                    '¿Está seguro de que desea registrar los datos ingresados?'
+                ) +
+                '<br><br>' +
+                '<div class="alert alert-warning" role="alert">' +
+                '<strong>Importante:</strong> Una vez guardados, los datos no podrán ser modificados directamente.  Si necesita realizar cambios, deberá contactar al administrador del sistema.' +
+                '</div>'
+            );
+            modal.find('#confirmarEnvioBtn').text(existeRegistro ? 'Actualizar Datos' : 'Guardar Datos');
+        });
+
+        $('#confirmarEnvioBtn').on('click', function() {
+            var formId = $(this).data('form-id');
+            //console.log("Enviando formulario:", formId);
+            // alert("Formulario enviado para guardar/actualizar.");
             
-            $("#modalMessage").text(mensaje);
-            $("#confirmarEnvioBtn")
-                .text(esActualizacion ? "Actualizar Cambios" : "Guardar Datos")
-                .data("es-actualizacion", esActualizacion);
-                
-            // Mostrar datos que se enviarán
-            if (esActualizacion) {
-                console.log("Datos que se enviarán para actualización:", obtenerDatosFormulario());
+            // Aquí se llama a la función para enviar el formulario
+            enviarFormulario(formId);
+        });
+    }
+
+    function validarFormularioCompleto() {
+        var camposRequeridos = $('[required]');
+        var formularioCompleto = true;
+
+        camposRequeridos.each(function() {
+            if (!$(this).val()) {
+                formularioCompleto = false;
+                return false; // Sale del bucle .each
             }
         });
 
-        // Manejar confirmación en el modal
-        $("#confirmarEnvioBtn").click(function() {
-            const form = $("#formulario_seccion1")[0];
-            const formData = new FormData(form);
-            const esActualizacion = $(this).data("es-actualizacion");
-            
-            // Agregar el userId al FormData
-            formData.append('userId', userId);
-            
-            console.log(`Confirmado ${esActualizacion ? 'actualización' : 'creación'} de datos`);
-            
-            // Deshabilitar botón y mostrar spinner
-            $(this).prop("disabled", true).html(
-                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando...'
-            );
-
-            // Determinar la URL adecuada
-            const url = esActualizacion ? URL + "Formulario/actualizarSeccion1" : URL + "Formulario/enviarSeccion1";
-            
-            // Enviar con AJAX
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    try {
-                        var responseData = typeof response === 'string' ? JSON.parse(response) : response;
-                        console.log("Respuesta del servidor al guardar/actualizar:", responseData);
-                        
-                        if (responseData.status === 'success') {
-                            // alert(responseData.message);
-                            console.log(responseData.message);
-                            location.href = URL + "Admin/HomeFormulario";
-                        } else {
-                            alert("Error: " + responseData.message);
-                            $("#confirmarEnvioBtn").prop("disabled", false).html(
-                                esActualizacion ? "Actualizar Cambios" : "Guardar Datos"
-                            );
-                        }
-                    } catch (e) {
-                        console.error("Error parsing response:", e.message, e.stack);
-                        alert(`Error procesando la respuesta del servidor:\n${e.message}\n${e.stack}`);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    alert("Error en la solicitud: " + error);
-                    $("#confirmarEnvioBtn").prop("disabled", false).html(
-                        esActualizacion ? "Actualizar Cambios" : "Guardar Datos"
-                    );
-                    console.error("Error en AJAX:", error);
-                }
-            });
-        });
-        console.log("Modal de confirmación configurado correctamente");
+        return formularioCompleto;
     }
 
-    // Función auxiliar para obtener datos del formulario
-    function obtenerDatosFormulario() {
-        const datos = {
-            apellido1: $("#apellido1").val(),
-            apellido2: $("#apellido2").val(),
-            nombresCompletos: $("#nombresCompletos").val(),
-            tipoIdentidad: $("#tipoIdentidad").val(),
-            numDoc: $("#numDoc").val(),
-            nationality: $("#nationality").val(),
-            fechaNacimiento: $("#fechaNacimiento").val(),
-            estadoCivil: $("#estadoCivil").val(),
-            correoElectronico: $("#correoElectronico").val(),
-            phoneCode: $("#phoneCode").val(),
-            celular: $("#phoneNumber").val(),
-            redProfesional: $("#basic-url").val(),
-            tipoDireccion: $("#tipoDireccion").val(),
-            direccion: $("#direccion").val(),
-            numeroDireccion: $("#numeroDireccion").val(),
-            PaisDatoDominicial: $("#PaisDatoDominicial").val(),
-            PaisDatoDominicialRegion: $("#PaisDatoDominicialRegion").val(),
-            provinciaDatoDominicial: $("#provinciaDatoDominicial").val(),
-            distritoDatoDominicial: $("#distritoDatoDominicial").val(),
-            referenciaDomicilio: $("#referenciaDomicilio").val()
-        };
-        
-        // Agregar información de archivos
-        if ($("#fotoPerfil")[0].files.length > 0) {
-            datos.fotoPerfil = "Nuevo archivo seleccionado";
-        }
-        
-        if ($("#pdfDocumentoIdentidad")[0].files.length > 0) {
-            datos.pdfDocumentoIdentidad = "Nuevo archivo seleccionado";
-        }
-        
-        return datos;
+
+    // Función para enviar el formulario (guardar/actualizar)
+    function enviarFormulario(formId) {
+        var formulario = $('#' + formId);
+        var formData = new FormData(formulario[0]);
+
+        $.ajax({
+            url: formulario.attr('action'),
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                try {
+                    var jsonResponse = JSON.parse(response);
+                    //console.log("Respuesta del servidor:", jsonResponse);
+                    // alert("Respuesta del servidor recibida. Ver consola para detalles.");
+                    
+                    if (jsonResponse.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: existeRegistro ? 'Datos Actualizados' : 'Datos Guardados',
+                            text: jsonResponse.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(function() {
+                            // Redirigir o recargar la página
+                            window.location.href = URL + 'Admin/HomeFormulario';
+                            // location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: existeRegistro ? 'Error al Actualizar' : 'Error al Guardar',
+                            text: jsonResponse.message
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error al parsear la respuesta JSON:", e);
+                    // alert("Error al procesar la respuesta del servidor.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error Inesperado',
+                        text: 'Ocurrió un error inesperado al procesar la respuesta del servidor.'
+                    });
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud AJAX:", {
+                    status: textStatus,
+                    error: errorThrown,
+                    response: jqXHR.responseText
+                });
+                // alert("Error al comunicarse con el servidor. Ver consola para detalles.");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de Conexión',
+                    text: 'Ocurrió un error al comunicarse con el servidor. Por favor, intente nuevamente.'
+                });
+            }
+        });
+    }
+
+    function cambiarBotonActualizacion() {
+        $('.btn-guardar').html('<i class="fa-solid fa-arrows-rotate"></i> Actualizar Datos');
     }
 });

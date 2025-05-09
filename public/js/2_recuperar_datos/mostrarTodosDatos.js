@@ -30,7 +30,7 @@ const previewStyles = `
         .preview-table tbody tr:nth-child(odd) { background-color: #f9f9f9; }
         .preview-table td a { color: #007bff; text-decoration: none; }
         .preview-table td a:hover { text-decoration: underline; }
-        .preview-table td .pdf-icon { color: #dc3545; margin-right: 5px; font-size: 1.1em; }
+        .preview-table td .pdf-icon { color: #dc3545; font-size: 20px; }
 
         .preview-signature-container { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; text-align: center; }
         .preview-signature-label { font-weight: bold; display: block; margin-bottom: 10px; color: #495057; }
@@ -95,30 +95,26 @@ const nombresCampos = {
     'cargo_actual': 'Cargo Actual', 'fecha_inicio_laboral': 'Fecha Inicio', 'nombre_empleador': 'Nombre Empleador', 'cargo_empleador': 'Cargo Empleador',
     'email_empleador': 'Email Empleador', 'telefono_empleador': 'Teléfono Empleador',
     'nivel_academico': 'Nivel Académico', 'titulo_obtenido': 'Título Obtenido', 'institucion': 'Institución', 'fecha_graduacion': 'Fecha Graduación',
-    'ruta_archivo_formacion': 'Adjunto',
+    'ruta_archivo_formacion': 'Anexos',
     'idioma': 'Idioma', 'nivel_oral': 'Nivel Oral', 'nivel_escrito': 'Nivel Escrito', 'nivel_lectura': 'Nivel Lectura',
-    'ruta_archivo_idioma': 'Adjunto',
+    'ruta_archivo_idioma': 'Anexos',
     'nombre_curso': 'Nombre Curso/Seminario', 'tipo_curso': 'Tipo', 'horas': 'Horas', 'fecha_curso': 'Fecha', 'institucion_curso': 'Institución',
-    'ruta_archivo_curso': 'Adjunto',
+    'ruta_archivo_curso': 'Anexos',
     'empresa': 'Empresa/Institución', 'cargo': 'Cargo', 'fecha_inicio': 'Fecha Inicio', 'fecha_fin': 'Fecha Fin', 'descripcion_funciones': 'Funciones',
-    'ruta_archivo_experiencia': 'Adjunto',
+    'ruta_archivo_experiencia': 'Anexos',
     'institucion_docente': 'Institución', 'curso_materia': 'Curso/Materia', 'periodo': 'Periodo', 'horas_semanales': 'Horas Sem.',
-    'ruta_archivo_docencia': 'Adjunto',
     'nombre_comite': 'Nombre Comité/Oficina', 'rol': 'Rol', 'periodo_comite': 'Periodo',
-    'ruta_archivo_comite': 'Adjunto',
     'evento_evaluacion': 'Evento/Institución Evaluada', 'rol_evaluador': 'Rol', 'fecha_evaluacion': 'Fecha',
-    'ruta_archivo_par': 'Adjunto',
     'nombre_asociacion': 'Asociación', 'numero_registro': 'Nro. Registro', 'fecha_incorporacion': 'Fecha Incorp.', 'vigente': 'Vigente',
-    'ruta_archivo_membresia': 'Adjunto',
     'tipo_publicacion': 'Tipo', 'titulo': 'Título', 'revista_medio': 'Revista/Medio', 'anio': 'Año', 'doi_url': 'DOI/URL',
-    'ruta_archivo_publicacion': 'Adjunto',
     'nombre_premio': 'Nombre Premio/Reconocimiento', 'otorgado_por': 'Otorgado por', 'fecha_premio': 'Fecha',
-    'ruta_archivo_premio': 'Adjunto',
     'carta_presentacion': 'Carta de Presentación',
     'conducta_etica': 'Declaro tener una conducta intachable y valores éticos.',
     'informacion_verdadera': 'Declaro que la información que he consignado en este formulario es verdadera.',
     'foto_perfil': 'Foto de Perfil',
-    'firma_digital': 'Firma Digital'
+    'pdf_formacion_academica': 'Anexos',
+    'pdf_experiencia': 'Anexos',
+    'pdf_experiencia_docente': 'Anexos',
 };
 
 const camposExcluirSiempre = ['id', 'postulante_id', 'usuario_id', 'fecha_envio', 'estado', 'created_at', 'updated_at'];
@@ -376,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function() {
         itemDiv.className = 'preview-data-item';
     
         if (typeof value === 'string' && value.length > 100) {
-           itemDiv.classList.add('full-width');
+            itemDiv.classList.add('full-width');
         }
     
         const labelDiv = document.createElement('div');
@@ -409,24 +405,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // 2. Manejo de archivos adjuntos (PDFs)
         if (key.toLowerCase().includes('ruta_archivo') || 
+            key.toLowerCase().includes('pdf_') ||
             (parentSectionKey === 'seccion1' && key === 'pdf_documento_identidad')) {
             
-            const fileName = String(value).split(/[\\/]/).pop();
-            const link = document.createElement('a');
+            const link = document.createElement('span');
             
-            // Usar la URL generada por el servidor si está disponible
             if (typeof value === 'object' && value.url) {
                 link.href = value.url;
             } else if (typeof value === 'string' && value.startsWith('http')) {
                 link.href = value;
             } else {
-                // Si no hay URL completa, usar el valor directo (el servidor debe manejarlo)
                 link.href = value;
             }
             
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.innerHTML = `<i class="fas fa-file-pdf pdf-icon" aria-hidden="true"></i> ${fileName}`;
+            // link.target = '_blank';
+            // link.rel = 'noopener noreferrer';
+            // link.className = 'pdf-icon-link';
+            link.innerHTML = `Anexo - Documento Identidad`;
             valueDiv.appendChild(link);
         }
         else if (typeof value === 'boolean') { 
@@ -462,11 +457,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const headerRow = thead.insertRow();
     
         const headers = Object.keys(items[0]).filter(key => !camposExcluirSiempre.includes(key.toLowerCase()));
-        const fileKey = headers.find(key => key.toLowerCase().startsWith('ruta_archivo_'));
+        const fileKey = headers.find(key => key.toLowerCase().includes('ruta_archivo_') || 
+                                        key.toLowerCase().includes('pdf_'));
     
         headers.forEach(key => {
             const th = document.createElement('th');
-            th.textContent = formatearNombre(key, nombresCampos);
+            // Cambiar nombres de campos de archivo a "Anexos"
+            const nombreMostrado = key.toLowerCase().includes('pdf_') || 
+                                key.toLowerCase().includes('ruta_archivo_') ? 
+                                'Anexos' : formatearNombre(key, nombresCampos);
+            th.textContent = nombreMostrado;
             headerRow.appendChild(th);
         });
     
@@ -477,36 +477,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 const cell = row.insertCell();
                 const value = item[key];
     
-                // Manejo de archivos adjuntos
-                if (fileKey && key === fileKey && value) {
-                    const fileName = String(value).split(/[\\/]/).pop();
-                    const link = document.createElement('a');
+                // Manejo de archivos adjuntos (mostrar solo icono PDF)
+                if ((fileKey && key === fileKey) || 
+                    key.toLowerCase().includes('pdf_') || 
+                    key.toLowerCase().includes('ruta_archivo_')) {
                     
-                    // Usar la URL generada por el servidor si está disponible
-                    if (typeof value === 'object' && value.url) {
-                        link.href = value.url;
-                    } else if (typeof value === 'string' && value.startsWith('http')) {
-                        link.href = value;
+                    if (value) {
+                        const link = document.createElement('span');
+                        link.className = 'pdf-icon-link';
+                        link.title = 'Ver documento adjunto';
+                        
+                        if (typeof value === 'object' && value.url) {
+                            link.href = value.url;
+                        } else if (typeof value === 'string' && value.startsWith('http')) {
+                            link.href = value;
+                        } else {
+                            link.href = value;
+                        }
+                        
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        link.innerHTML = `<i class="fas fa-file-pdf pdf-icon" aria-hidden="true"></i>`;
+                        cell.appendChild(link);
                     } else {
-                        // Si no hay URL completa, usar el valor directo
-                        link.href = value;
+                        cell.textContent = '-';
                     }
-                    
-                    link.target = '_blank';
-                    link.rel = 'noopener noreferrer';
-                    link.innerHTML = `<i class="fas fa-file-pdf pdf-icon" aria-hidden="true"></i> ${fileName}`;
-                    cell.appendChild(link);
                 }
                 else if (typeof value === 'boolean') {
                     cell.textContent = value ? 'Sí' : 'No';
-                } else if (value instanceof Date) {
+                } 
+                else if (value instanceof Date) {
                     cell.textContent = value.toLocaleDateString();
-                } else if (key.toLowerCase().includes('url') || key.toLowerCase().includes('doi')) {
+                } 
+                else if (key.toLowerCase().includes('url') || key.toLowerCase().includes('doi')) {
                     cell.innerHTML = `<a href="${value}" target="_blank" rel="noopener noreferrer">${value}</a>`;
                 }
                 else if (value !== null && value !== undefined) {
                     cell.innerHTML = String(value).replace(/\\n/g, '<br>');
-                } else {
+                } 
+                else {
                     cell.textContent = '-';
                 }
             });
@@ -764,8 +773,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await responseId.json();
             const postulanteId = data.postulanteId;
 
-            const contador = postulanteId || '0000';
-            const subtitleText = 'PFEV2025-' + contador;
+            const numericId = Number.isInteger(postulanteId) ? postulanteId : 0;
+            const paddedId = String(numericId).padStart(4, '0');
+            // const contador = postulanteId || '0000';
+            const subtitleText = 'PFEV2025-' + paddedId || '0000';
             const subtitleY = titleY + 10;
             pdf.text(subtitleText, titleX, subtitleY, { align: 'center' });
 
@@ -961,7 +972,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         pages.forEach(page => finalPdf.addPage(page));
                     } else {
                         const image = await finalPdf.embedJpg(arrayBuffer) || 
-                                     await finalPdf.embedPng(arrayBuffer);
+                                    await finalPdf.embedPng(arrayBuffer);
                         const imagePage = finalPdf.addPage([image.width, image.height]);
                         imagePage.drawImage(image, {
                             x: 0,
@@ -1024,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const link = document.createElement('a');
             link.href = pdfUrl;
-            link.download = `Formulario_Inscripcion_ICACIT_2025_${contador}.pdf`;
+            link.download = `Formulario_Inscripcion_ICACIT_2025.pdf`;
             link.style.display = 'none';
             document.body.appendChild(link);
             link.click();

@@ -219,7 +219,7 @@ function recolectarDatosTablasExperiencia(formData, existeRegistro) {
                 formData.append(`experienciaMembresias[${index}][${key}]`, data[key]);
             }
 
-            nuevosDatos.experienciaMembresias.push(data);
+            nuevosDatos.experienciaMembresias.push(data);//error al agregar nuevos datos
             console.log("Nuevo registro formación:", data);
         }
     });

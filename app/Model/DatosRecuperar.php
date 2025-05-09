@@ -10,6 +10,13 @@ use Exception;
 
 class DatosRecuperar extends Model
 {
+    //funcion para recuperar datos de la tabla usuario (nombres, apellidos y correo)
+    public function getDatosUsuario($userId){
+        $sql = "SELECT email, nombre, apellido_paterno, apellido_materno FROM usuarios WHERE id = :id";
+    $query = $this->db->prepare($sql);
+    $query->execute([':id' => $userId]);
+    return $query->fetch(PDO::FETCH_ASSOC);
+    }
 
     public function insertCartaPresentacion($data)
     {

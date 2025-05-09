@@ -9,6 +9,33 @@ use Exception;
 
 class DatosRecuperarController
 {
+
+    //recueperar datos del usuario para llenar el form de la seccion 1
+    public function getDatosUsuario()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            session_start();
+            if (!isset($_SESSION['user_id'])) {
+                throw new Exception("Usuario no autenticado", 401);
+            }
+
+            $userId = $_SESSION['user_id'];
+            $datosRecuperarModel = new DatosRecuperar();
+            $userData = $datosRecuperarModel->getDatosUsuario($userId);
+
+
+            if ($userData) {
+                echo json_encode(['status' => 'success', 'data' => $userData]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'No se encontraron datos de usuario.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
     /* Recuperar los datos para las secciones de manera individual */
     // Mostrar la sección 7
     public function recuperarDatosSeccion7()
@@ -659,32 +686,33 @@ class DatosRecuperarController
         exit;
     }
 
-    private function procesarArchivosSeccion(&$seccionData, $seccionKey) {
+    private function procesarArchivosSeccion(&$seccionData, $seccionKey)
+    {
         $basePaths = [
             'fotos_perfil' => 'view/admin/upload/fotos_perfil/',
-            'firmas' => 'app/view/admin/upload/firmas/',
-            'documentos_identidad' => 'app/view/admin/upload/documentos_identidad/',
-            'formacion_academica' => 'app/view/admin/upload/formacion_academica/',
-            'experiencia_laboral' => 'app/view/admin/upload/experiencia_laboral/',
-            'experiencia_docente' => 'app/view/admin/upload/experiencia_laboral/experiencia_docente/'
+            'firmas' => 'view/admin/upload/firmas/',
+            'documentos_identidad' => 'view/admin/upload/documentos_identidad/',
+            'formacion_academica' => 'view/admin/upload/formacion_academica/',
+            'experiencia_laboral' => 'view/admin/upload/experiencia_laboral/',
+            'experiencia_docente' => 'view/admin/upload/experiencia_laboral/experiencia_docente/'
         ];
-    
+
         // Procesar foto de perfil (Sección 1)
         if ($seccionKey === 'seccion1' && isset($seccionData['foto_perfil'])) {
             $seccionData['foto_perfil_url'] = $this->generarUrlArchivo(
-                $basePaths['fotos_perfil'], 
+                $basePaths['fotos_perfil'],
                 $seccionData['foto_perfil']
             );
         }
-    
+
         // Procesar firma digital (Sección 8)
         if ($seccionKey === 'seccion8' && isset($seccionData['firma_digital'])) {
             $seccionData['firma_digital_url'] = $this->generarUrlArchivo(
-                $basePaths['firmas'], 
+                $basePaths['firmas'],
                 $seccionData['firma_digital']
             );
         }
-    
+
         // Procesar PDFs de documentos
         $pdfFields = [
             'pdf_documento_identidad' => $basePaths['documentos_identidad'],
@@ -692,13 +720,13 @@ class DatosRecuperarController
             'ruta_archivo_experiencia' => $basePaths['experiencia_laboral'],
             'ruta_archivo_docencia' => $basePaths['experiencia_docente']
         ];
-    
+
         foreach ($pdfFields as $field => $path) {
             if (isset($seccionData[$field])) {
                 $seccionData[$field . '_url'] = $this->generarUrlArchivo($path, $seccionData[$field]);
             }
         }
-    
+
         // Procesar arrays de datos que puedan contener archivos
         if (is_array($seccionData)) {
             foreach ($seccionData as $key => $value) {
@@ -710,7 +738,7 @@ class DatosRecuperarController
                                     $tipo = $this->determinarTipoArchivo($key, $subKey);
                                     if ($tipo && isset($basePaths[$tipo])) {
                                         $item['ruta_archivo_url'] = $this->generarUrlArchivo(
-                                            $basePaths[$tipo], 
+                                            $basePaths[$tipo],
                                             $item['ruta_archivo']
                                         );
                                     }
@@ -722,32 +750,34 @@ class DatosRecuperarController
             }
         }
     }
-    
-    private function generarUrlArchivo($relativePath, $filename) {
+
+    private function generarUrlArchivo($relativePath, $filename)
+    {
         if (empty($filename)) {
             return null;
         }
-    
+
         // Verificar si ya es una URL completa o un data URI
         if (filter_var($filename, FILTER_VALIDATE_URL) || strpos($filename, 'data:') === 0) {
             return $filename;
         }
-    
+
         // Verificar si el archivo existe físicamente
         $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/' . trim($relativePath, '/') . '/' . $filename;
         if (!file_exists($fullPath)) {
             error_log("Archivo no encontrado: $fullPath");
             return null;
         }
-    
+
         // Generar URL completa
-        $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . 
-                    "://$_SERVER[HTTP_HOST]";
-        
+        $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") .
+            "://$_SERVER[HTTP_HOST]";
+
         return $baseUrl . '/' . trim($relativePath, '/') . '/' . rawurlencode($filename);
     }
-    
-    private function determinarTipoArchivo($seccion, $subseccion) {
+
+    private function determinarTipoArchivo($seccion, $subseccion)
+    {
         $map = [
             'formacion_academica' => 'formacion_academica',
             'idiomas' => 'formacion_academica',
@@ -760,7 +790,7 @@ class DatosRecuperarController
             'publicaciones' => 'formacion_academica',
             'premios_reconocimientos' => 'formacion_academica'
         ];
-    
+
         return $map[$subseccion] ?? $map[$seccion] ?? null;
     }
 }

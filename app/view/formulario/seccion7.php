@@ -81,3 +81,4 @@
 
 <!-- Recuperar Datos -->
 <script src="<?php echo URL; ?>js/2_recuperar_datos/recuperarDatosSeccion7.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

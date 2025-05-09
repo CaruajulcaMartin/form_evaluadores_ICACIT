@@ -90,3 +90,4 @@
 
 <!-- scrip para enviar formulario -->
 <script src="<?php echo URL; ?>js/2_recuperar_datos/recuperarDatosSeccion8.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

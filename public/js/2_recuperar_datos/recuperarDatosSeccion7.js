@@ -19,7 +19,7 @@ $(document).ready(function() {
     // Inicialización
     if (!userId) {
         console.error('ID de usuario no definido - Elemento #userId no encontrado o vacío');
-        alert('Error: No se pudo identificar al usuario');
+        //alert('Error: No se pudo identificar al usuario');
         return;
     }
 
@@ -28,7 +28,7 @@ $(document).ready(function() {
 
     // Configurar eventos
     $textarea.on('input', function() {
-        console.log('Texto modificado');
+        //console.log('Texto modificado');
         actualizarContadorPalabras();
         verificarCambios();
     });
@@ -38,7 +38,7 @@ $(document).ready(function() {
 
     // Funciones principales
     function cargarDatosIniciales() {
-        console.log('Cargando datos iniciales...');
+        //console.log('Cargando datos iniciales...');
         
         $.ajax({
             url: `${URL}DatosRecuperar/recuperarDatosSeccion7`,
@@ -49,7 +49,7 @@ $(document).ready(function() {
                 console.log('Respuesta recibida (recuperarDatosSeccion7):', response);
                 
                 if (response?.cartaPresentacion) {
-                    console.log('Datos de carta de presentación encontrados');
+                    //console.log('Datos de carta de presentación encontrados');
                     existeRegistro = true;
                     textoOriginal = response.cartaPresentacion;
                     $textarea.val(textoOriginal);
@@ -75,7 +75,7 @@ $(document).ready(function() {
         const texto = $textarea.val().trim();
         const numPalabras = texto ? texto.split(/\s+/).length : 0;
         
-        console.log('Actualizando contador de palabras:', numPalabras);
+       // console.log('Actualizando contador de palabras:', numPalabras);
         $contadorPalabras.text(`Máximo 400 palabras. Palabras actuales: ${numPalabras}`);
         $mensajeError.toggle(numPalabras > 400);
     }
@@ -86,13 +86,13 @@ $(document).ready(function() {
         const textoActual = $textarea.val().trim();
         const hayCambios = textoActual !== textoOriginal;
         
-        console.log('Verificando cambios:', { textoOriginal, textoActual, hayCambios });
+        //console.log('Verificando cambios:', { textoOriginal, textoActual, hayCambios });
         $textarea.toggleClass('campo-modificado', hayCambios);
         $btnGuardar.prop('disabled', !hayCambios);
     }
 
     function configurarBotonActualizar() {
-        console.log('Configurando botón como "Actualizar"');
+        //console.log('Configurando botón como "Actualizar"');
         $btnGuardar
             .removeClass('btn-success')
             .addClass('btn-warning')
@@ -107,7 +107,7 @@ $(document).ready(function() {
             ? "¿Estás seguro de actualizar tu carta de presentación?"
             : "¿Estás seguro de guardar tu carta de presentación?";
         
-        console.log('Mostrando modal de confirmación:', { esActualizacion, mensaje });
+        //console.log('Mostrando modal de confirmación:', { esActualizacion, mensaje });
         $modalMessage.text(mensaje);
         $confirmarEnvioBtn
             .text(esActualizacion ? "Actualizar" : "Guardar")
@@ -119,16 +119,20 @@ $(document).ready(function() {
         const texto = $textarea.val().trim();
         const numPalabras = texto ? texto.split(/\s+/).length : 0;
         
-        console.log('Enviando formulario:', {
-            esActualizacion,
-            texto,
-            numPalabras
-        });
+        // console.log('Enviando formulario:', {
+        //     esActualizacion,
+        //     texto,
+        //     numPalabras
+        // });
     
         // Validación
         if (numPalabras > 400) {
             console.warn('Validación fallida: Excede el límite de palabras');
-            alert('La carta no puede exceder las 400 palabras');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'La carta no puede exceder las 400 palabras.',
+            });
             return;
         }
     
@@ -153,14 +157,21 @@ $(document).ready(function() {
             console.log('Respuesta exitosa:', response);
             
             if (response.status === 'success') {
-                if (response.redirect) {
-                    // alert(response.message);
-                    location.href = response.redirect;
-                } else {
-                    textoOriginal = texto;
-                    verificarCambios();
-                    alert(response.message);
-                }
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Guardado!',
+                    text: response.message || (esActualizacion ? 'Carta de presentación actualizada correctamente.' : 'Carta de presentación guardada correctamente.'),
+                    confirmButtonText: 'Aceptar',
+                }).then((result) =>{
+                    if (response.redirect) {
+                        // alert(response.message);
+                        location.href = response.redirect;
+                    } else {
+                        textoOriginal = texto;
+                        verificarCambios();
+                        //alert(response.message);
+                    }
+                });
             } else {
                 throw new Error(response.message || 'Error desconocido');
             }
@@ -175,7 +186,12 @@ $(document).ready(function() {
                 errorMessage = `${xhr.status}: ${xhr.statusText}`;
             }
             
-            alert(errorMessage);
+            //alert(errorMessage);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+            });
         })
         .always(function() {
             $btn.prop('disabled', false)

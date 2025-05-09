@@ -200,23 +200,43 @@ $(document).ready(function() {
                             JSON.parse(response) : response;
                         
                         if (responseData.status === 'success') {
-                            alert(responseData.message);
-                            if (responseData.debug) {
-                                console.log("Debug del servidor:", responseData.debug);
-                            }
-                            location.href = URL + "Admin/HomeFormulario";
+                            //alert(responseData.message);
+                            // if (responseData.debug) {
+                            //     console.log("Debug del servidor:", responseData.debug);
+                            // }
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Guardado!',
+                                text: responseData.message || (esActualizacion ? 'Datos actualizados correctamente.' : 'Datos guardados correctamente.'),
+                                confirmButtonText: 'Aceptar',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = URL + "Admin/HomeFormulario";
+                                }
+                            });
+                            
                         } else {
                             throw new Error(responseData.message || "Error desconocido");
                         }
                     } catch (e) {
                         console.error("Error al procesar respuesta:", e);
-                        alert("Error: " + e.message);
+                        //alert("Error: " + e.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: "Error al procesar la respuesta del servidor.",
+                        });
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en AJAX:", status, error);
                     console.error("Respuesta del servidor:", xhr.responseText);
-                    alert("Error en la solicitud. Ver consola para detalles.");
+                    //alert("Error en la solicitud. Ver consola para detalles.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "Error en la solicitud. Ver consola para detalles.",
+                    });
                 },
                 complete: () => {
                     $(this).prop("disabled", false)
@@ -248,7 +268,7 @@ function recuperarDatosSeccion5(){
             data: { userId: userId },
             dataType: "json",
             success: function(data) {
-                console.log("Datos recibidos del servidor de investigaciones:", data);
+                //console.log("Datos recibidos del servidor de investigaciones:", data);
                 
                 existeRegistro = data && data.length > 0;
                 
@@ -259,7 +279,7 @@ function recuperarDatosSeccion5(){
     
                     // Recorre cada registro y crea una fila en la tabla
                     $.each(data, function(index, registro) {
-                        console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.fecha_publicacion}`);
+                        //console.log(`Registro formación cargado - ID: ${registro.id}, Tipo: ${registro.fecha_publicacion}`);
                         var fila = `
                             <tr data-id="${registro.id || 'new'}">
                                 <td>${registro.fecha_publicacion || 'N/A'}</td>
@@ -283,7 +303,7 @@ function recuperarDatosSeccion5(){
             },
             error: function(xhr, status, error) {
                 console.error("Error al cargar los datos:", error);
-                alert("Error al cargar los datos. Ver consola para más detalles.");
+                //alert("Error al cargar los datos. Ver consola para más detalles.");
             }
         });
     })

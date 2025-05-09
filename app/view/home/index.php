@@ -154,3 +154,4 @@
 </script>
 
 <script src="<?php echo URL; ?>js/1_login/login.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
